@@ -4,7 +4,7 @@ plugins {
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id("dev.flutter.flutter-gradle-plugin")
 }
-
+val mapsApiKey: String = project.findProperty("MAPS_API_KEY") as String? ?: ""
 android {
     namespace = "com.example.delviery_smartcare"
     compileSdk = flutter.compileSdkVersion
@@ -24,6 +24,7 @@ android {
         applicationId = "com.example.delviery_smartcare"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
+        manifestPlaceholders["MAPS_API_KEY"] = mapsApiKey
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
@@ -39,6 +40,9 @@ android {
     }
 }
 
+
+
 flutter {
     source = "../.."
 }
+
