@@ -1,6 +1,11 @@
 import 'package:delviery_smartcare/core/bloc_observer.dart';
+import 'package:delviery_smartcare/core/apiservices/api_service.dart';
+import 'package:delviery_smartcare/core/apiservices/token_storage_service.dart';
+import 'package:delviery_smartcare/features/auth/auth_setup.dart';
+import 'package:delviery_smartcare/features/auth/data/repositories/auth_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'core/theme/app_theme.dart';
 import 'features/auth/presentation/views/login_view.dart';
 import 'features/auth/presentation/cubits/auth_cubit.dart';
@@ -21,7 +26,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider(create: (_) => AuthCubit()),
+        BlocProvider(
+          create: (_) => AuthSetup.createAuthCubit()
+        ),
         BlocProvider(create: (_) => MapCubit()),
         BlocProvider(create: (_) => OrdersCubit()..loadOrders()),
       ],
