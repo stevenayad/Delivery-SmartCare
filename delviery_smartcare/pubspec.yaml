@@ -41,6 +41,9 @@ dependencies:
   google_maps_flutter: ^2.10.0
   geolocator: ^13.0.2
   location: ^8.0.1
+  dio: ^5.4.0
+  flutter_secure_storage: ^9.2.2
+  dartz: ^0.10.1
 
 
 
