@@ -14,9 +14,17 @@ class OrderCardHeader extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(
-          'ORDER ${order.orderId}',
+          'ORDER',
           style: TextStyle(
             color: Colors.grey[400],
+            fontSize: 12,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        Text(
+          '${order.orderId}',
+          style: TextStyle(
+            color: Colors.black,
             fontSize: 12,
             fontWeight: FontWeight.bold,
           ),

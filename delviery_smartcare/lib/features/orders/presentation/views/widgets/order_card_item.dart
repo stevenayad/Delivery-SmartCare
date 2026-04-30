@@ -32,8 +32,6 @@ class OrderCardItem extends StatelessWidget {
         children: [
           OrderCardHeader(order: order),
           const SizedBox(height: 8),
-
-          const SizedBox(height: 16),
           OrderLocation(
             icon: Icons.location_on,
             color: AppColors.primary,

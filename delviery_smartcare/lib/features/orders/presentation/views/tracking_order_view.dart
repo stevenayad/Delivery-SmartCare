@@ -2,8 +2,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:delviery_smartcare/core/theme/app_colors.dart';
 import 'final_stage_view.dart';
-import 'widgets/eta_overlay.dart';
-import 'widgets/map_controls.dart';
 import 'widgets/tracking_bottom_card.dart';
 
 class TrackingOrderView extends StatelessWidget {
@@ -62,33 +60,11 @@ class TrackingOrderView extends StatelessWidget {
                       ],
                     ),
                   ),
-                  IconButton(
-                    icon: const Icon(Icons.notifications_none),
-                    onPressed: () {},
-                  ),
-                  const CircleAvatar(
-                    radius: 18,
-                    backgroundImage: NetworkImage(
-                      'https://i.pravatar.cc/150?u=driver',
-                    ),
-                  ),
+                
                 ],
               ),
             ),
           ),
-
-          // ETA Overlay
-          const Positioned(
-            top: 130,
-            left: 20,
-            child: ETAOverlay(
-              eta: '8 MIN',
-              distanceRemaining: '0.4 miles remaining',
-            ),
-          ),
-
-          // Map Controls
-          const Positioned(top: 130, right: 20, child: MapControls()),
 
           // Bottom Card
           Positioned(

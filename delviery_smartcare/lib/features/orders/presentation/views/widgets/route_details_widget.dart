@@ -2,19 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:delviery_smartcare/core/theme/app_colors.dart';
 
 class RouteDetailsWidget extends StatelessWidget {
-  final String pickupName;
-  final String pickupAddress;
+  final String storename;
+  final String storeAddress;
   final String deliveryName;
   final String deliveryAddress;
-  final String estTime;
+  final String distancekm;
 
   const RouteDetailsWidget({
     super.key,
-    required this.pickupName,
-    required this.pickupAddress,
+    required this.storename,
+    required this.storeAddress,
     required this.deliveryName,
     required this.deliveryAddress,
-    required this.estTime,
+    required this.distancekm,
   });
 
   @override
@@ -34,7 +34,7 @@ class RouteDetailsWidget extends StatelessWidget {
               ),
             ),
             Text(
-              'Est. $estTime',
+              'distane. $distancekm',
               style: const TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.bold,
@@ -57,8 +57,8 @@ class RouteDetailsWidget extends StatelessWidget {
                 icon: Icons.add_business_rounded,
                 iconColor: AppColors.primary,
                 label: 'PICKUP',
-                title: pickupName,
-                subtitle: pickupAddress,
+                title: storename,
+                subtitle: storeAddress,
               ),
               Padding(
                 padding: const EdgeInsets.only(left: 19),

@@ -2,7 +2,7 @@ import 'package:delviery_smartcare/core/theme/app_colors.dart';
 import 'package:delviery_smartcare/core/widgets/feature_app_bar.dart';
 import 'package:delviery_smartcare/features/orders/presentation/cubits/orders_cubit.dart';
 import 'package:delviery_smartcare/features/orders/presentation/cubits/orders_state.dart';
-import 'package:delviery_smartcare/features/orders/presentation/views/widgets/build_filters.dart';
+import 'package:delviery_smartcare/features/orders/presentation/views/widgets/order_top_section.dart';
 import 'package:delviery_smartcare/features/orders/presentation/views/widgets/build_order_list.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -17,6 +17,8 @@ class AvailableOrdersBody extends StatelessWidget {
       appBar: const FeatureAppBar(title: 'Available Orders'),
       body: Column(
         children: [
+          const SizedBox(height: 16),
+
           /// Orders List with states
           Expanded(
             child: BlocBuilder<OrdersCubit, OrdersState>(

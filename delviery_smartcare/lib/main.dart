@@ -6,7 +6,6 @@ import 'package:delviery_smartcare/features/orders/data/repository/oeder_reposit
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-
 import 'core/theme/app_theme.dart';
 import 'features/auth/presentation/views/login_view.dart';
 import 'features/auth/presentation/cubits/auth_cubit.dart';
@@ -48,7 +47,7 @@ class MyApp extends StatelessWidget {
         title: 'Delivery SmartCare',
         debugShowCheckedModeBanner: false,
         theme: AppTheme.lightTheme,
-        home: const AppRoot(), // 👈 بدل Class تانية
+        home: const AppRoot(),
       ),
     );
   }
