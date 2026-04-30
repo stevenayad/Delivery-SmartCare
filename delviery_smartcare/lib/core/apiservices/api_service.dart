@@ -3,7 +3,6 @@ import 'package:dartz/dartz.dart';
 import 'package:flutter/foundation.dart';
 import '../errors/failure.dart';
 import 'token_storage_service.dart';
-import 'token_interceptor.dart';
 
 class ApiService {
   static const String baseUrl = 'https://smartcarepharmacy.tryasp.net/api';
@@ -26,96 +25,118 @@ class ApiService {
         validateStatus: (status) => true,
       ),
     );
-
-    // Add token interceptor if token storage is provided
-    if (_tokenStorage != null) {
-      _dio.interceptors.add(TokenInterceptor(tokenStorage: _tokenStorage!));
-    }
-
-    // Add logging interceptor
-    _dio.interceptors.add(
-      InterceptorsWrapper(
-        onRequest: (options, handler) {
-          debugPrint('[API REQUEST] ${options.method} ${options.path}');
-          debugPrint('[API BODY] ${options.data}');
-          return handler.next(options);
-        },
-        onResponse: (response, handler) {
-          debugPrint('[API RESPONSE] ${response.statusCode} ${response}');
-          debugPrint('[API DATA] ${response.data}');
-          return handler.next(response);
-        },
-        onError: (error, handler) {
-          debugPrint('[API ERROR] ${error.message}');
-          debugPrint('[API ERROR RESPONSE] ${error.response?.data}');
-          return handler.next(error);
-        },
-      ),
-    );
   }
 
-  Future<Either<Failure, Response<T>>> post<T>(
+  // =========================
+  // 🔥 GET
+  // =========================
+  Future<Either<Failure, Response>> get(
+    String endpoint, {
+    Map<String, dynamic>? queryParameters,
+  }) async {
+    try {
+      final token = await _tokenStorage?.getAccessToken();
+      final headers = <String, dynamic>{};
+      if (token != null && token.isNotEmpty) {
+        headers['Authorization'] = 'Bearer $token';
+      }
+
+      print("🔥 TOKEN => $token");
+
+      final response = await _dio.get(
+        endpoint,
+        queryParameters: queryParameters,
+        options: Options(headers: headers),
+      );
+
+      debugPrint('[API REQUEST] GET $endpoint');
+      debugPrint('[HEADERS] ${response.requestOptions.headers}');
+      debugPrint('[API RESPONSE] ${response.statusCode}');
+      debugPrint('[API DATA] ${response.data}');
+
+      if (response.statusCode != null && response.statusCode! >= 400) {
+        return Left(
+          ServerFailure(
+            statusCode: response.statusCode!,
+            message: response.data?.toString() ?? 'Server error',
+          ),
+        );
+      }
+
+      return Right(response);
+    } on DioException catch (e) {
+      return Left(_handleDioError(e));
+    } catch (e) {
+      return Left(UnknownFailure('Unexpected error: $e'));
+    }
+  }
+
+  // =========================
+  // 🔥 POST
+  // =========================
+  Future<Either<Failure, Response>> post(
     String endpoint, {
     required Map<String, dynamic> data,
     Map<String, dynamic>? queryParameters,
   }) async {
     try {
-      final response = await _dio.post<T>(
+      final token = await _tokenStorage?.getAccessToken();
+      final headers = <String, dynamic>{};
+      if (token != null && token.isNotEmpty) {
+        headers['Authorization'] = 'Bearer $token';
+      }
+
+      print("🔥 TOKEN => $token");
+
+      final response = await _dio.post(
         endpoint,
         data: data,
         queryParameters: queryParameters,
+        options: Options(headers: headers),
       );
+
+      debugPrint('[API REQUEST] POST $endpoint');
+      debugPrint('[HEADERS] ${response.requestOptions.headers}');
+      debugPrint('[API RESPONSE] ${response.statusCode}');
+      debugPrint('[API DATA] ${response.data}');
+
+      if (response.statusCode != null && response.statusCode! >= 400) {
+        return Left(
+          ServerFailure(
+            statusCode: response.statusCode!,
+            message: response.data?.toString() ?? 'Server error',
+          ),
+        );
+      }
+
       return Right(response);
     } on DioException catch (e) {
-      debugPrint('DioException: ${e.message}');
       return Left(_handleDioError(e));
     } catch (e) {
-      debugPrint('Unexpected error: $e');
-      return Left(UnknownFailure('An unexpected error occurred: $e'));
+      return Left(UnknownFailure('Unexpected error: $e'));
     }
   }
 
-  Future<Either<Failure, Response<T>>> get<T>(
-    String endpoint, {
-    Map<String, dynamic>? queryParameters,
-  }) async {
-    try {
-      final response = await _dio.get<T>(
-        endpoint,
-        queryParameters: queryParameters,
-      );
-      return Right(response);
-    } on DioException catch (e) {
-      debugPrint('DioException: ${e.message}');
-      return Left(_handleDioError(e));
-    } catch (e) {
-      debugPrint('Unexpected error: $e');
-      return Left(UnknownFailure('An unexpected error occurred: $e'));
-    }
-  }
-
+  // =========================
+  // 🔥 ERROR HANDLER
+  // =========================
   Failure _handleDioError(DioException error) {
     switch (error.type) {
       case DioExceptionType.connectionTimeout:
-        return NetworkFailure('Connection timeout. Please check your internet');
+        return NetworkFailure('Connection timeout');
       case DioExceptionType.sendTimeout:
-        return NetworkFailure('Send timeout. Please check your internet');
+        return NetworkFailure('Send timeout');
       case DioExceptionType.receiveTimeout:
-        return NetworkFailure('Server took too long to respond');
+        return NetworkFailure('Receive timeout');
       case DioExceptionType.connectionError:
-        return NetworkFailure('Network error. Please check your connection');
-      case DioExceptionType.unknown:
-        return NetworkFailure('Unknown network error: ${error.message}');
+        return NetworkFailure('No internet connection');
       case DioExceptionType.badResponse:
-        final statusCode = error.response?.statusCode ?? 0;
         return ServerFailure(
-          statusCode: statusCode,
-          message: error.response?.data['message'] ?? 'Server error',
+          statusCode: error.response?.statusCode ?? 0,
+          message: error.response?.data?.toString() ?? 'Server error',
         );
-      case DioExceptionType.cancel:
-        return NetworkFailure('Request cancelled');
-      case DioExceptionType.badCertificate:
-        return NetworkFailure('Bad certificate. Security error');
+      default:
+        return UnknownFailure(error.message ?? 'Unknown error');
     }
   }
 }

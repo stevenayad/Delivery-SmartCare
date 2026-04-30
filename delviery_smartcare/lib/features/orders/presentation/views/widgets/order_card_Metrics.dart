@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:delviery_smartcare/core/theme/app_colors.dart';
-import 'package:delviery_smartcare/features/orders/data/models/order_model.dart' show OrderModel;
-
 
 class OrderMetrics extends StatelessWidget {
-  final OrderModel order;
+  final order;
 
   const OrderMetrics({super.key, required this.order});
 
@@ -12,19 +10,16 @@ class OrderMetrics extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        OrderMetric(label: 'DISTANCE', value: order.distance),
+        OrderMetric(label: 'DISTANCE', value: '${order.distanceKm?.toString() ?? '0'} km'),
         const SizedBox(width: 24),
-        OrderMetric(label: 'ETA', value: order.eta),
+        OrderMetric(label: 'ETA', value: '--'),
         const Spacer(),
-        OrderMetric(
-          label: 'EARNING',
-          value: order.earning,
-          isHighlight: true,
-        ),
+        OrderMetric(label: 'EARNING', value: '\$${order.deliveryFee?.toString() ?? '0'}', isHighlight: true),
       ],
     );
   }
 }
+
 class OrderMetric extends StatelessWidget {
   final String label;
   final String value;

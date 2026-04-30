@@ -1,15 +1,11 @@
-import 'package:delviery_smartcare/features/orders/presentation/views/order_status_view.dart';
-import 'package:delviery_smartcare/features/orders/presentation/views/tracking_order_view.dart';
-import 'package:delviery_smartcare/features/orders/presentation/views/widgets/buttons_order_details.dart';
-import 'package:delviery_smartcare/features/orders/presentation/views/widgets/customer_request_card.dart';
-import 'package:delviery_smartcare/features/orders/presentation/views/widgets/info_box.dart';
+import 'package:delviery_smartcare/features/orders/data/models/order_delviery_shippinf/datum.dart';
 import 'package:delviery_smartcare/features/orders/presentation/views/widgets/map_background.dart';
-import 'package:delviery_smartcare/features/orders/presentation/views/widgets/order_summary_card.dart';
-import 'package:delviery_smartcare/features/orders/presentation/views/widgets/route_details_widget.dart';
 import 'package:flutter/material.dart';
 
 class OrderDetailsBody extends StatelessWidget {
-  const OrderDetailsBody({super.key});
+  final OrderDelvieryShippingDatum order;
+
+  const OrderDetailsBody({super.key, required this.order});
 
   @override
   Widget build(BuildContext context) {
@@ -24,62 +20,153 @@ class OrderDetailsBody extends StatelessWidget {
             padding: const EdgeInsets.fromLTRB(20, 120, 20, 100),
             child: Column(
               children: [
-                CustomerRequestCard(
-                  name: 'Mrs. Eleanor Rigby',
-                  label: 'Frequent Customer',
-                  rating: '4.9',
-                  onCall: () {},
+                // Order ID
+                Card(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Row(
+                      children: [
+                        const Text(
+                          'Order ID: ',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        Text(order.orderId ?? ""),
+                      ],
+                    ),
+                  ),
                 ),
-                const SizedBox(height: 30),
+                const SizedBox(height: 16),
 
-                const RouteDetailsWidget(
-                  pickupName: 'MediCare Central Pharmacy',
-                  pickupAddress: '7th Avenue Medical District, Unit 4B',
-                  deliveryName: '404 Lincoln Residential Park',
-                  deliveryAddress: 'Apt 12, West Wing Entrance',
-                  estTime: '12 mins',
+                // Store Info
+                Card(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Store Info',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Text('Address: ${order.storeAddress}'),
+                      ],
+                    ),
+                  ),
                 ),
+                const SizedBox(height: 16),
 
-                const SizedBox(height: 30),
-
-                const OrderSummaryCard(
-                  items: [
-                    {'name': 'Amoxicillin 500mg', 'quantity': '1'},
-                    {'name': 'Lisinopril 10mg (30 day)', 'quantity': '2'},
-                    {'name': 'Nitrile Gloves (Box 100)', 'quantity': '1'},
-                  ],
-                  totalEarnings: '\$18.50',
+                // Client Info
+                Card(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Client Info',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Text('Name: ${order.clientName}'),
+                        Text('Phone: ${order.clientPhone}'),
+                      ],
+                    ),
+                  ),
                 ),
+                const SizedBox(height: 16),
 
-                const SizedBox(height: 20),
+                // Addresses
+                Card(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Addresses',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Text('From: ${order.storeAddress}'),
+                        Text('To: ${order.deliveryAddressAdditionalInfo}'),
+                      ],
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16),
 
-                const InfoBox(
-                  icon: Icons.info_outline,
-                  text:
-                      'Contains temperature-sensitive medication. Keep in insulated compartment.',
+                // Distance and Price
+                Card(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('Distance: ${order.distanceKm} km'),
+                        Text('Total Price: \$${order.totalPrice}'),
+                        Text('Delivery Fee: \$${order.deliveryFee}'),
+                      ],
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16),
+
+                // Items
+                if (order.items != null && order.items!.isNotEmpty) ...[
+                  Card(
+                    child: Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'Items',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          ...order.items!.map(
+                            (item) => Text(
+                              '${item.medicineName ?? 'Unknown'} - Quantity: ${item.quantity ?? 0}',
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                ],
+
+                // Accept Order Button
+                ElevatedButton(
+                  onPressed: () {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Order Accepted!')),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.green,
+                    minimumSize: const Size(double.infinity, 50),
+                  ),
+                  child: const Text(
+                    'Accept Order',
+                    style: TextStyle(color: Colors.white),
+                  ),
                 ),
               ],
             ),
-          ),
-        ),
-
-        /// 🔹 Bottom Buttons
-        Positioned(
-          bottom: 0,
-          left: 0,
-          right: 0,
-          child: Buttonorderdetails(
-            onAccept: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const OrderStatusView(),
-                ),
-              );
-            },
-            onDecline: () {
-              Navigator.pop(context);
-            },
           ),
         ),
       ],
