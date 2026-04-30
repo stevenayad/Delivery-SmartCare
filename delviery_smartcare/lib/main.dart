@@ -3,6 +3,7 @@ import 'package:delviery_smartcare/core/apiservices/api_service.dart';
 import 'package:delviery_smartcare/core/apiservices/token_storage_service.dart';
 import 'package:delviery_smartcare/features/auth/data/repositories/auth_repository.dart';
 import 'package:delviery_smartcare/features/orders/data/repository/oeder_repository_impl.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -11,7 +12,7 @@ import 'features/auth/presentation/views/login_view.dart';
 import 'features/auth/presentation/cubits/auth_cubit.dart';
 import 'features/auth/presentation/cubits/auth_state.dart';
 import 'features/map/presentation/cubits/map_cubit.dart';
-import 'features/orders/presentation/cubits/orders_cubit.dart';
+import 'features/orders/presentation/cubits/orders/orders_cubit.dart';
 import 'presentation/widgets/main_scaffold.dart';
 
 void main() {
@@ -25,7 +26,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final tokenStorage = TokenStorageService(FlutterSecureStorage());
-    final apiService = ApiService(tokenStorage: tokenStorage);
+    final apiService = ApiService(Dio(), tokenStorage);
 
     return MultiBlocProvider(
       providers: [

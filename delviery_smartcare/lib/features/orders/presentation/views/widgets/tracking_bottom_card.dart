@@ -1,20 +1,25 @@
+import 'package:delviery_smartcare/features/orders/data/models/order_delviery_shippinf/datum.dart';
 import 'package:flutter/material.dart';
 import 'package:delviery_smartcare/core/theme/app_colors.dart';
 
 class TrackingBottomCard extends StatelessWidget {
-  final String address;
-  final String cityZip;
-  final String recipientName;
   final VoidCallback onReached;
   final VoidCallback onCall;
-
+  final OrderDelvieryShippingDatum order;
+  final bool isArrived;
+  final bool isLoading;
+  final bool showStoreButton;
+  final VoidCallback? onStoreReached;
+  
   const TrackingBottomCard({
     super.key,
-    required this.address,
-    required this.cityZip,
-    required this.recipientName,
     required this.onReached,
     required this.onCall,
+    required this.order,
+    required this.isArrived,
+    this.isLoading = false,
+    this.showStoreButton = false,
+    this.onStoreReached,
   });
 
   @override
@@ -68,7 +73,7 @@ class TrackingBottomCard extends StatelessWidget {
                     ),
                     const SizedBox(height: 12),
                     Text(
-                      address,
+                      order.deliveryAddressLine ?? "",
                       style: const TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
@@ -76,7 +81,7 @@ class TrackingBottomCard extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      cityZip,
+                      order.deliveryAddressAdditionalInfo ?? "",
                       style: const TextStyle(
                         fontSize: 16,
                         color: AppColors.textSecondary,
@@ -122,7 +127,7 @@ class TrackingBottomCard extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    recipientName,
+                    order.clientName ?? "Unknown",
                     style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
@@ -133,28 +138,62 @@ class TrackingBottomCard extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 24),
-          ElevatedButton(
-            onPressed: onReached,
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.primary,
-              foregroundColor: Colors.white,
-              minimumSize: const Size(double.infinity, 56),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
+          if (showStoreButton)
+            ElevatedButton(
+              onPressed: isLoading ? null : onStoreReached,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.primary,
+                foregroundColor: Colors.white,
+                minimumSize: const Size(double.infinity, 56),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+              child: isLoading
+                  ? const SizedBox(
+                      height: 24,
+                      width: 24,
+                      child: CircularProgressIndicator(color: Colors.white, strokeWidth: 3),
+                    )
+                  : const Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.store),
+                        SizedBox(width: 8),
+                        Text(
+                          'Arrived at Store',
+                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                        ),
+                      ],
+                    ),
+            )
+          else if (!showStoreButton && !isArrived && onStoreReached != null)
+            const SizedBox.shrink() // Hidden if not close enough to store
+          else
+            ElevatedButton(
+              onPressed: isArrived ? onReached : null,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: isArrived
+                    ? AppColors.primary
+                    : Colors.grey.shade400,
+                foregroundColor: Colors.white,
+                minimumSize: const Size(double.infinity, 56),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+              child: const Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.location_on),
+                  SizedBox(width: 8),
+                  Text(
+                    'Mark as Destination Reached',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+                ],
               ),
             ),
-            child: const Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(Icons.location_on),
-                SizedBox(width: 8),
-                Text(
-                  'Mark as Destination Reached',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                ),
-              ],
-            ),
-          ),
         ],
       ),
     );

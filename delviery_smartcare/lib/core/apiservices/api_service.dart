@@ -1,142 +1,116 @@
+import 'package:delviery_smartcare/core/servieces/faliure_services.dart';
 import 'package:dio/dio.dart';
-import 'package:dartz/dartz.dart';
 import 'package:flutter/foundation.dart';
 import '../errors/failure.dart';
 import 'token_storage_service.dart';
 
 class ApiService {
-  static const String baseUrl = 'https://smartcarepharmacy.tryasp.net/api';
-  late Dio _dio;
-  final TokenStorageService? _tokenStorage;
+  final Dio dio;
+  final TokenStorageService storage;
 
-  ApiService({TokenStorageService? tokenStorage})
-    : _tokenStorage = tokenStorage {
-    _initializeDio();
-  }
+  VoidCallback? onUnauthorized;
+  Function(String)? onTokenRefreshed;
 
-  void _initializeDio() {
-    _dio = Dio(
-      BaseOptions(
-        baseUrl: baseUrl,
-        connectTimeout: const Duration(seconds: 30),
-        receiveTimeout: const Duration(seconds: 30),
-        sendTimeout: const Duration(seconds: 30),
-        contentType: Headers.jsonContentType,
-        validateStatus: (status) => true,
+  ApiService(this.dio, this.storage) {
+    dio.options = BaseOptions(
+      baseUrl: 'https://smartcarepharmacy.tryasp.net/',
+      connectTimeout: const Duration(seconds: 120),
+      receiveTimeout: const Duration(seconds: 120),
+      sendTimeout: const Duration(seconds: 120),
+    );
+
+    // ✅ Interceptor
+    dio.interceptors.add(
+      InterceptorsWrapper(
+        onRequest: (options, handler) async {
+          final token = await storage.getAccessToken();
+
+          if (token != null && token.isNotEmpty) {
+            options.headers['Authorization'] = 'Bearer $token';
+          }
+
+          return handler.next(options);
+        },
+        onError: (error, handler) {
+          if (error.response?.statusCode == 401) {
+            onUnauthorized?.call();
+          }
+          return handler.next(error);
+        },
       ),
     );
-  }
 
-  // =========================
-  // 🔥 GET
-  // =========================
-  Future<Either<Failure, Response>> get(
-    String endpoint, {
-    Map<String, dynamic>? queryParameters,
-  }) async {
-    try {
-      final token = await _tokenStorage?.getAccessToken();
-      final headers = <String, dynamic>{};
-      if (token != null && token.isNotEmpty) {
-        headers['Authorization'] = 'Bearer $token';
-      }
-
-      print("🔥 TOKEN => $token");
-
-      final response = await _dio.get(
-        endpoint,
-        queryParameters: queryParameters,
-        options: Options(headers: headers),
+    if (kDebugMode) {
+      dio.interceptors.add(
+        LogInterceptor(
+          requestBody: true,
+          responseBody: true,
+          error: true,
+        ),
       );
-
-      debugPrint('[API REQUEST] GET $endpoint');
-      debugPrint('[HEADERS] ${response.requestOptions.headers}');
-      debugPrint('[API RESPONSE] ${response.statusCode}');
-      debugPrint('[API DATA] ${response.data}');
-
-      if (response.statusCode != null && response.statusCode! >= 400) {
-        return Left(
-          ServerFailure(
-            statusCode: response.statusCode!,
-            message: response.data?.toString() ?? 'Server error',
-          ),
-        );
-      }
-
-      return Right(response);
-    } on DioException catch (e) {
-      return Left(_handleDioError(e));
-    } catch (e) {
-      return Left(UnknownFailure('Unexpected error: $e'));
     }
   }
 
   // =========================
-  // 🔥 POST
+  // GET
   // =========================
-  Future<Either<Failure, Response>> post(
+  Future<dynamic> get(
     String endpoint, {
-    required Map<String, dynamic> data,
-    Map<String, dynamic>? queryParameters,
+    Map<String, dynamic>? query,
   }) async {
     try {
-      final token = await _tokenStorage?.getAccessToken();
-      final headers = <String, dynamic>{};
-      if (token != null && token.isNotEmpty) {
-        headers['Authorization'] = 'Bearer $token';
-      }
-
-      print("🔥 TOKEN => $token");
-
-      final response = await _dio.post(
-        endpoint,
-        data: data,
-        queryParameters: queryParameters,
-        options: Options(headers: headers),
-      );
-
-      debugPrint('[API REQUEST] POST $endpoint');
-      debugPrint('[HEADERS] ${response.requestOptions.headers}');
-      debugPrint('[API RESPONSE] ${response.statusCode}');
-      debugPrint('[API DATA] ${response.data}');
-
-      if (response.statusCode != null && response.statusCode! >= 400) {
-        return Left(
-          ServerFailure(
-            statusCode: response.statusCode!,
-            message: response.data?.toString() ?? 'Server error',
-          ),
-        );
-      }
-
-      return Right(response);
+      final response = await dio.get(endpoint, queryParameters: query);
+      return response.data;
     } on DioException catch (e) {
-      return Left(_handleDioError(e));
-    } catch (e) {
-      return Left(UnknownFailure('Unexpected error: $e'));
+      throw servivefailure.fromDioError(e);
     }
   }
 
   // =========================
-  // 🔥 ERROR HANDLER
+  // POST
   // =========================
-  Failure _handleDioError(DioException error) {
-    switch (error.type) {
-      case DioExceptionType.connectionTimeout:
-        return NetworkFailure('Connection timeout');
-      case DioExceptionType.sendTimeout:
-        return NetworkFailure('Send timeout');
-      case DioExceptionType.receiveTimeout:
-        return NetworkFailure('Receive timeout');
-      case DioExceptionType.connectionError:
-        return NetworkFailure('No internet connection');
-      case DioExceptionType.badResponse:
-        return ServerFailure(
-          statusCode: error.response?.statusCode ?? 0,
-          message: error.response?.data?.toString() ?? 'Server error',
-        );
-      default:
-        return UnknownFailure(error.message ?? 'Unknown error');
+  Future<dynamic> post(String endpoint, dynamic body) async {
+    try {
+      final response = await dio.post(endpoint, data: body);
+      return response.data;
+    } on DioException catch (e) {
+      throw servivefailure.fromDioError(e);
+    }
+  }
+
+  // =========================
+  // PUT
+  // =========================
+  Future<dynamic> put(String endpoint, dynamic body) async {
+    try {
+      final response = await dio.put(endpoint, data: body);
+      return response.data;
+    } on DioException catch (e) {
+      throw servivefailure.fromDioError(e);
+    }
+  }
+
+  // =========================
+  // DELETE
+  // =========================
+  Future<dynamic> delete(String endpoint, dynamic body) async {
+    try {
+      final response = await dio.delete(endpoint, data: body);
+      return response.data;
+    } on DioException catch (e) {
+      throw servivefailure.fromDioError(e);
+    }
+  }
+
+  // =========================
+  // PATCH
+  // =========================
+  Future<dynamic> patch(String endpoint, dynamic body) async {
+    try {
+      final response = await dio.patch(endpoint, data: body);
+      return response.data;
+    } on DioException catch (e) {
+      throw servivefailure.fromDioError(e);
     }
   }
 }

@@ -15,6 +15,21 @@ final class OrdersLoaded extends OrdersState {
   OrdersLoaded({required this.orders, required this.activeFilter});
 }
 
+final class OrderAccepted extends OrdersState {
+  final String message;
+  OrderAccepted(this.message);
+}
+
+final class OrdeConfrimed extends OrdersState {
+  final String message;
+  OrdeConfrimed(this.message);
+}
+
+final class OrderShipping extends OrdersState {
+  final String message;
+  OrderShipping(this.message);
+}
+
 final class OrdersError extends OrdersState {
   final String message;
   OrdersError(this.message);

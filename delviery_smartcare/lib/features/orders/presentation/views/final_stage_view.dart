@@ -1,14 +1,12 @@
+import 'package:delviery_smartcare/features/orders/data/models/order_delviery_shippinf/datum.dart';
 import 'package:delviery_smartcare/features/orders/presentation/views/widgets/final_stage_body.dart';
 import 'package:flutter/material.dart';
 import 'package:delviery_smartcare/core/theme/app_colors.dart';
-import 'delivery_success_view.dart';
-import 'widgets/order_header_card.dart';
-import 'widgets/recipient_detail_card.dart';
-import 'widgets/id_verification_row.dart';
+
 
 class FinalStageView extends StatelessWidget {
-  const FinalStageView({super.key});
-
+  const FinalStageView({super.key, required this.order});
+  final OrderDelvieryShippingDatum order;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -24,7 +22,7 @@ class FinalStageView extends StatelessWidget {
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
       ),
-      body: const FinalStageBody(),
+      body:  FinalStageBody(order: order,),
     );
   }
 }

@@ -42,6 +42,8 @@ class OrderHeaderCard extends StatelessWidget {
               children: [
                 Text(
                   'Order $orderId',
+                  maxLines: 1,
+                   overflow: TextOverflow.ellipsis,
                   style: const TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 16,

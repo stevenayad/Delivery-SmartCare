@@ -44,7 +44,7 @@ class OrderStatusBody extends StatelessWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => const TrackingOrderView(),
+                  builder: (context) =>  TrackingOrderView(order: order,),
                 ),
               );
             },
