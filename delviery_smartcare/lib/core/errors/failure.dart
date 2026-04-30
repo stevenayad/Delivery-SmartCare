@@ -11,13 +11,8 @@ class ServerFailure extends Failure {
     : super(message);
 }
 
-
 class FailureHandler {
-  
-  static Failure handleResponse({
-    required int? statusCode,
-    String? message,
-  }) {
+  static Failure handleResponse({required int? statusCode, String? message}) {
     switch (statusCode) {
       case 400:
         return ServerFailure(
@@ -73,7 +68,7 @@ class FailureHandler {
 
       return NetworkFailure('Network error occurred');
     }
-
+    print('Unexpected error: $error');
     return UnknownFailure('Unexpected error: $error');
   }
 }

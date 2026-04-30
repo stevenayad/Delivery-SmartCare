@@ -1,8 +1,8 @@
 import 'package:delviery_smartcare/core/bloc_observer.dart';
 import 'package:delviery_smartcare/core/apiservices/api_service.dart';
 import 'package:delviery_smartcare/core/apiservices/token_storage_service.dart';
-import 'package:delviery_smartcare/features/auth/auth_setup.dart';
 import 'package:delviery_smartcare/features/auth/data/repositories/auth_repository.dart';
+import 'package:delviery_smartcare/features/orders/data/repository/oeder_repository_impl.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -24,34 +24,56 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final tokenStorage = TokenStorageService(FlutterSecureStorage());
+    final apiService = ApiService(tokenStorage: tokenStorage);
+
     return MultiBlocProvider(
       providers: [
         BlocProvider(
-          create: (_) => AuthSetup.createAuthCubit()
+          create: (_) => AuthCubit(
+            authRepository: AuthRepository(
+              apiService: apiService,
+              tokenStorage: tokenStorage,
+            ),
+          ),
         ),
         BlocProvider(create: (_) => MapCubit()),
-        BlocProvider(create: (_) => OrdersCubit()..loadOrders()),
+        BlocProvider(
+          create: (_) =>
+              OrdersCubit(OrderRepositoryImpl(apiService: apiService)),
+        ),
       ],
       child: MaterialApp(
         title: 'Delivery SmartCare',
         debugShowCheckedModeBanner: false,
         theme: AppTheme.lightTheme,
-        home: const AuthWrapper(),
+        home: const AppRoot(),
       ),
     );
   }
 }
 
-class AuthWrapper extends StatelessWidget {
-  const AuthWrapper({super.key});
+class AppRoot extends StatelessWidget {
+  const AppRoot({super.key});
 
   @override
   Widget build(BuildContext context) {
     return BlocListener<AuthCubit, AuthState>(
       listener: (context, state) {
+        if (!context.mounted) return;
+
         if (state is AuthSuccess) {
           Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (_) => const MainScaffold()),
+            MaterialPageRoute(
+              builder: (_) => MultiBlocProvider(
+                providers: [
+                  BlocProvider.value(value: context.read<AuthCubit>()),
+                  BlocProvider.value(value: context.read<OrdersCubit>()),
+                  BlocProvider.value(value: context.read<MapCubit>()),
+                ],
+                child: const MainScaffold(),
+              ),
+            ),
           );
         }
       },

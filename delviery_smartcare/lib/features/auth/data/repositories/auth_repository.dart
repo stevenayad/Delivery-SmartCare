@@ -23,27 +23,33 @@ class AuthRepository {
     try {
       final request = LoginRequest(email: email, password: password);
 
-      final result = await _apiService.post<Map<String, dynamic>>(
+      final result = await _apiService.post(
         '/auth/login',
         data: request.toJson(),
       );
 
-      return result.fold((failure) => Left(failure), (response) {
+      return result.fold((failure) => Left<Failure, AuthTokens>(failure), (
+        response,
+      ) async {
         try {
           final apiResponse = ApiResponse<AuthTokens>.fromJson(
-            response.data!,
+            response.data,
             (json) => AuthTokens.fromJson(json),
           );
 
           if (apiResponse.succeeded && apiResponse.data != null) {
             final tokens = apiResponse.data!;
-            _tokenStorage.saveTokens(
+
+            await _tokenStorage.saveTokens(
               accessToken: tokens.accessToken,
               refreshToken: tokens.refreshToken,
             );
-            return Right(tokens);
+            final savedToken = await _tokenStorage.getAccessToken();
+            print("✅ SAVED TOKEN => $savedToken");
+
+            return Right<Failure, AuthTokens>(tokens);
           } else {
-            return Left(
+            return Left<Failure, AuthTokens>(
               FailureHandler.handleResponse(
                 statusCode: response.statusCode,
                 message: apiResponse.message,
@@ -51,24 +57,11 @@ class AuthRepository {
             );
           }
         } catch (e) {
-          return Left(ParseFailure('Failed to parse response: $e'));
+          return Left<Failure, AuthTokens>(ParseFailure('Parse error: $e'));
         }
       });
     } catch (e) {
-      return Left(FailureHandler.handleException(e));
+      return Left<Failure, AuthTokens>(FailureHandler.handleException(e));
     }
-  }
-
-  Future<void> logout() async {
-    await _tokenStorage.clearTokens();
-  }
-
-  Future<String?> getAccessToken() async {
-    return await _tokenStorage.getAccessToken();
-  }
-
-  Future<bool> isAuthenticated() async {
-    final token = await _tokenStorage.getAccessToken();
-    return token != null && token.isNotEmpty;
   }
 }

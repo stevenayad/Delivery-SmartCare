@@ -14,6 +14,8 @@ class LoginForm extends StatelessWidget {
 
     return BlocListener<AuthCubit, AuthState>(
       listener: (context, state) {
+        if (!context.mounted) return;
+
         if (state is AuthError) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text(state.message), backgroundColor: Colors.red),

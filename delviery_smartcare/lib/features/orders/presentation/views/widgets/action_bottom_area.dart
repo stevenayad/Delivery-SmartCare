@@ -4,14 +4,13 @@ import 'package:delviery_smartcare/core/theme/app_colors.dart';
 class ActionBottomArea extends StatelessWidget {
   final String buttonText;
   final IconData buttonIcon;
-  final String estimatedTime;
   final VoidCallback onPressed;
 
   const ActionBottomArea({
     super.key,
     required this.buttonText,
     required this.buttonIcon,
-    required this.estimatedTime,
+
     required this.onPressed,
   });
 
@@ -50,11 +49,7 @@ class ActionBottomArea extends StatelessWidget {
             ),
           ),
         ),
-        const SizedBox(height: 8),
-        Text(
-          'Estimated completion time: $estimatedTime',
-          style: const TextStyle(fontSize: 14, color: AppColors.textSecondary),
-        ),
+       
         const SizedBox(height: 20),
       ],
     );

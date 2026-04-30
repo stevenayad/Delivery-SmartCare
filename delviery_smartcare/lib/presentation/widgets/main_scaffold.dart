@@ -15,6 +15,15 @@ class MainScaffold extends StatefulWidget {
 class _MainScaffoldState extends State<MainScaffold> {
   int _currentIndex = 0;
 
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      context.read<OrdersCubit>().loadOrders();
+    });
+  }
+
   final List<Widget> _screens = [
     const LiveMapView(),
     const AvailableOrdersView(),
@@ -51,7 +60,10 @@ class _MainScaffoldState extends State<MainScaffold> {
           selectedItemColor: AppColors.primary,
           unselectedItemColor: Colors.grey,
           type: BottomNavigationBarType.fixed,
-          selectedLabelStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
+          selectedLabelStyle: const TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 12,
+          ),
           unselectedLabelStyle: const TextStyle(fontSize: 12),
           items: [
             BottomNavigationBarItem(
@@ -77,7 +89,7 @@ class _MainScaffoldState extends State<MainScaffold> {
 
   Widget _buildNavIcon(IconData icon, int index, {bool isActive = false}) {
     if (!isActive) return Icon(icon);
-    
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       decoration: BoxDecoration(

@@ -13,6 +13,7 @@ class TokenInterceptor extends Interceptor {
     RequestInterceptorHandler handler,
   ) async {
     final token = await _tokenStorage.getAccessToken();
+    print('token => ${token}');
     if (token != null && token.isNotEmpty) {
       options.headers['Authorization'] = 'Bearer $token';
     }
@@ -24,13 +25,8 @@ class TokenInterceptor extends Interceptor {
     DioException err,
     ErrorInterceptorHandler handler,
   ) async {
-    if (err.response?.statusCode == 401) {
-      await _handleTokenRefresh();
-    }
     return handler.next(err);
   }
 
-  Future<void> _handleTokenRefresh() async {
-    await _tokenStorage.clearTokens();
-  }
+  
 }

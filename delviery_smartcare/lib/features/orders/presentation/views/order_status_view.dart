@@ -1,16 +1,13 @@
+import 'package:delviery_smartcare/features/orders/data/models/order_delviery_shippinf/datum.dart';
 import 'package:delviery_smartcare/features/orders/presentation/views/widgets/order_status_body.dart';
 import 'package:flutter/material.dart';
 import 'package:delviery_smartcare/core/theme/app_colors.dart';
-import 'tracking_order_view.dart';
-import 'widgets/success_header.dart';
-import 'widgets/order_main_details_card.dart';
-import 'widgets/prescription_details_card.dart';
-import 'widgets/action_bottom_area.dart';
 
 class OrderStatusView extends StatelessWidget {
- 
 
-  const OrderStatusView({super.key});
+  final OrderDelvieryShippingDatum order;
+
+  const OrderStatusView({super.key, required this.order});
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +24,7 @@ class OrderStatusView extends StatelessWidget {
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
       ),
-      body: const OrderStatusBody()
+      body:  OrderStatusBody(order: order,),
     );
   }
 }

@@ -21,7 +21,10 @@ class _LiveMapBodyState extends State<LiveMapBody> {
   @override
   void initState() {
     super.initState();
-    context.read<MapCubit>().initializeMap();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      context.read<MapCubit>().initializeMap();
+    });
   }
 
   @override

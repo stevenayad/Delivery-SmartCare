@@ -13,8 +13,8 @@ class AuthCubit extends Cubit<AuthState> {
   bool isPasswordVisible = false;
 
   AuthCubit({required AuthRepository authRepository})
-      : _authRepository = authRepository,
-        super(AuthInitial());
+    : _authRepository = authRepository,
+      super(AuthInitial());
 
   void togglePasswordVisibility() {
     isPasswordVisible = !isPasswordVisible;
@@ -41,11 +41,6 @@ class AuthCubit extends Cubit<AuthState> {
       (failure) => emit(AuthError(failure.message)),
       (tokens) => emit(AuthSuccess(tokens)),
     );
-  }
-
-  Future<void> logout() async {
-    await _authRepository.logout();
-    emit(AuthInitial());
   }
 
   @override
