@@ -1,6 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:delviery_smartcare/core/servieces/faliure_services.dart';
-import '../../../../core/errors/failure.dart' hide Failure;
+
 import '../../../../core/apiservices/api_service.dart';
 import '../../../../core/apiservices/token_storage_service.dart';
 import '../models/api_response_model.dart';
@@ -14,8 +14,8 @@ class AuthRepository {
   AuthRepository({
     required ApiService apiService,
     required TokenStorageService tokenStorage,
-  })  : _apiService = apiService,
-        _tokenStorage = tokenStorage;
+  }) : _apiService = apiService,
+       _tokenStorage = tokenStorage;
 
   Future<Either<Failure, AuthTokens>> login({
     required String email,

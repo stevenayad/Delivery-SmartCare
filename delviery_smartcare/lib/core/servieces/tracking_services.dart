@@ -68,3 +68,25 @@ class TrackingService {
 
   static double _toRad(double degrees) => degrees * pi / 180;
 }
+
+
+
+double calculateDistance(LatLng start, LatLng end) {
+  const double earthRadius = 6371; // km
+
+  double dLat = _degToRad(end.latitude - start.latitude);
+  double dLon = _degToRad(end.longitude - start.longitude);
+
+  double a =
+      sin(dLat / 2) * sin(dLat / 2) +
+      cos(_degToRad(start.latitude)) *
+          cos(_degToRad(end.latitude)) *
+          sin(dLon / 2) *
+          sin(dLon / 2);
+
+  double c = 2 * atan2(sqrt(a), sqrt(1 - a));
+
+  return earthRadius * c;
+}
+
+double _degToRad(double deg) => deg * pi / 180;

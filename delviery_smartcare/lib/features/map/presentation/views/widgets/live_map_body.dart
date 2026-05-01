@@ -1,7 +1,9 @@
+import 'package:delviery_smartcare/features/map/presentation/cubits/nearest_store/neareststore_cubit.dart';
+import 'package:delviery_smartcare/features/map/presentation/cubits/nearest_store/neareststore_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:delviery_smartcare/features/map/presentation/cubits/map_cubit.dart';
+import 'package:delviery_smartcare/features/map/presentation/cubits/map_init/map_cubit.dart';
 import 'package:delviery_smartcare/features/map/presentation/views/widgets/Map_floating_button.dart';
 import 'package:delviery_smartcare/features/map/presentation/views/widgets/Map_header.dart';
 import 'package:delviery_smartcare/features/map/presentation/views/widgets/map_view.dart'
@@ -16,8 +18,6 @@ class LiveMapBody extends StatefulWidget {
 }
 
 class _LiveMapBodyState extends State<LiveMapBody> {
-  GoogleMapController? _mapController;
-
   @override
   void initState() {
     super.initState();
@@ -31,19 +31,22 @@ class _LiveMapBodyState extends State<LiveMapBody> {
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        MapViewWidget(onMapCreated: (c) => _mapController = c),
+        MapViewWidget(),
         const MapHeader(),
         const MapFloatingButtons(),
         Positioned(
           bottom: 24,
           left: 16,
           right: 16,
-          child: OrderPreviewCard(
-            title: 'New Order Available',
-            payout: '\$15.50',
-            distanceInfo: 'PharmaPlus • 2.5 km away',
-            onViewDetails: () {},
-            onClose: () {},
+          child: BlocBuilder<NeareststoreCubit, NearestStoreState>(
+            builder: (context, state) {
+              if (state is NearestStoreSuccess) {
+                return OrderPreviewCard(
+                  store: state.store, 
+                );
+              }
+              return const SizedBox();
+            },
           ),
         ),
       ],

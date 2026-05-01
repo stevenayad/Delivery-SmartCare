@@ -1,17 +1,17 @@
 import 'package:delviery_smartcare/core/servieces/faliure_services.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
-import '../errors/failure.dart';
+
 import 'token_storage_service.dart';
 
 class ApiService {
   final Dio dio;
-  final TokenStorageService storage;
+  final TokenStorageService? storage;
 
   VoidCallback? onUnauthorized;
   Function(String)? onTokenRefreshed;
 
-  ApiService(this.dio, this.storage) {
+  ApiService(this.dio, {this.storage}) {
     dio.options = BaseOptions(
       baseUrl: 'https://smartcarepharmacy.tryasp.net/',
       connectTimeout: const Duration(seconds: 120),
@@ -23,7 +23,7 @@ class ApiService {
     dio.interceptors.add(
       InterceptorsWrapper(
         onRequest: (options, handler) async {
-          final token = await storage.getAccessToken();
+          final token = await storage?.getAccessToken();
 
           if (token != null && token.isNotEmpty) {
             options.headers['Authorization'] = 'Bearer $token';

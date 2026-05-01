@@ -1,3 +1,5 @@
+import 'package:delviery_smartcare/features/map/data/model/store_model.dart';
+
 import 'package:delviery_smartcare/features/map/presentation/views/widgets/action_button_order_preview.dart';
 import 'package:delviery_smartcare/features/map/presentation/views/widgets/label_order_preview.dart';
 import 'package:delviery_smartcare/features/map/presentation/views/widgets/payout_order_preview.dart';
@@ -5,20 +7,9 @@ import 'package:flutter/material.dart';
 import '../../../../../core/theme/app_colors.dart';
 
 class OrderPreviewCard extends StatelessWidget {
-  final String title;
-  final String payout;
-  final String distanceInfo;
-  final VoidCallback onViewDetails;
-  final VoidCallback onClose;
+  final StoreModel store;
 
-  const OrderPreviewCard({
-    super.key,
-    required this.title,
-    required this.payout,
-    required this.distanceInfo,
-    required this.onViewDetails,
-    required this.onClose,
-  });
+  const OrderPreviewCard({super.key, required this.store});
 
   @override
   Widget build(BuildContext context) {
@@ -40,10 +31,12 @@ class OrderPreviewCard extends StatelessWidget {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  buildLabel('IMMEDIATE DELIVERY'),
+                  buildLabel('Nearest Store'),
                   const SizedBox(height: 12),
+
+                  // 👇 اسم الاستور
                   Text(
-                    title,
+                    store.name,
                     style: const TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
@@ -52,13 +45,18 @@ class OrderPreviewCard extends StatelessWidget {
                   ),
                 ],
               ),
-              PayoutOrderPreview(payout: payout,),
             ],
           ),
+
           const SizedBox(height: 16),
-          _buildInfoRow(Icons.medical_services_outlined, distanceInfo),
-          const SizedBox(height: 24),
-          ActionButtonsOrderPreview(onViewDetails:onViewDetails, onClose: onClose,),
+
+          // 👇 العنوان + المسافة
+          _buildInfoRow(Icons.location_on_outlined, '${store.address} '),
+
+          const SizedBox(height: 8),
+
+          // 👇 رقم التليفون
+          _buildInfoRow(Icons.phone, store.phone),
         ],
       ),
     );
@@ -69,7 +67,13 @@ class OrderPreviewCard extends StatelessWidget {
       children: [
         Icon(icon, size: 16, color: Colors.grey[600]),
         const SizedBox(width: 8),
-        Text(info, style: TextStyle(color: Colors.grey[600], fontSize: 14)),
+        Expanded(
+          child: Text(
+            info,
+            style: TextStyle(color: Colors.grey[600], fontSize: 14),
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
       ],
     );
   }
