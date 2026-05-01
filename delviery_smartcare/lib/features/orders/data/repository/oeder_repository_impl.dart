@@ -1,61 +1,85 @@
-import 'dart:convert';
 import 'package:dartz/dartz.dart';
-import 'package:delviery_smartcare/features/orders/data/models/order_delviery_shippinf/datum.dart';
-import '../../../../core/errors/failure.dart';
+import 'package:delviery_smartcare/core/servieces/faliure_services.dart';
+import '../../../../core/errors/failure.dart' hide Failure;
 import '../../../../core/apiservices/api_service.dart';
+import '../models/order_delviery_shippinf/datum.dart';
 
 class OrderRepositoryImpl {
   final ApiService _apiService;
 
   OrderRepositoryImpl({required ApiService apiService})
-      : _apiService = apiService;
+    : _apiService = apiService;
 
   Future<Either<Failure, List<OrderDelvieryShippingDatum>>>
-      getShippingOrders() async {
+  getShippingOrders() async {
     try {
-      final result = await _apiService.get('/Delivery/orders/Ready-Of-Ship');
-
-      return result.fold(
-        (failure) =>
-            Left<Failure, List<OrderDelvieryShippingDatum>>(failure),
-
-        (response) {
-          try {
-            final raw = response.data;
-
-            if (raw == null || raw.toString().isEmpty) {
-              return Left<Failure, List<OrderDelvieryShippingDatum>>(
-                ParseFailure('Empty response body'),
-              );
-            }
-
-            final json = raw is String ? jsonDecode(raw) : raw;
-
-            if (json is! Map<String, dynamic>) {
-              return Left<Failure, List<OrderDelvieryShippingDatum>>(
-                ParseFailure('Invalid response format'),
-              );
-            }
-
-            final dataList = (json['data'] as List?) ?? [];
-
-            final orders = dataList
-                .map((e) => OrderDelvieryShippingDatum.fromJson(
-                    e as Map<String, dynamic>))
-                .toList();
-
-            return Right<Failure, List<OrderDelvieryShippingDatum>>(orders);
-          } catch (e) {
-            return Left<Failure, List<OrderDelvieryShippingDatum>>(
-              ParseFailure('Parsing error: $e'),
-            );
-          }
-        },
+      final response = await _apiService.get(
+        '/api/Delivery/orders/Ready-Of-Ship',
       );
+
+      final dataList = (response['data'] as List?) ?? [];
+
+      final orders = dataList
+          .map((e) => OrderDelvieryShippingDatum.fromJson(e))
+          .toList();
+
+      return Right(orders);
     } catch (e) {
-      return Left<Failure, List<OrderDelvieryShippingDatum>>(
-        FailureHandler.handleException(e),
+      if (e is Failure) return Left(e);
+      return Left(servivefailure("Parsing error"));
+    }
+  }
+
+  Future<Either<Failure, String>> AcceptOrder(String orderId) async {
+    try {
+      final response = await _apiService.patch(
+        '/api/Delivery/orders/Accepted?orderId=${orderId}',
+        null,
       );
+
+      final message = response['message'];
+
+      return Right(message);
+    } catch (e) {
+      if (e is Failure) return Left(e);
+      return Left(servivefailure("Parsing error"));
+    }
+  }
+
+ Future<Either<Failure, String>> ShippingOrder(String orderId) async {
+  try {
+    final res = await _apiService.get('/api/orders/details/$orderId');
+
+    final data = res is Map ? res : res.data;
+
+    final status = data['data']['status'];
+
+    print('status = $status');
+
+    if (status == 2) {
+      return Right("Delviery Shipping order now");
+    } else {
+      return Left(servivefailure("Order not ready for shipping"));
+    }
+
+  } catch (e) {
+    return Left(servivefailure(e.toString()));
+  }
+}
+
+  Future<Either<Failure, String>> ConfrimOrder(String orderId) async {
+    try {
+      final response = await _apiService.patch(
+        '/api/Delivery/orders/${orderId}/confirm-delivery',
+        null,
+      );
+
+      final message = response['message'];
+
+      return Right(message);
+    } catch (e) {
+      if (e is Failure) return Left(e);
+      return Left(servivefailure("Parsing error"));
     }
   }
 }

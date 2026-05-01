@@ -1,7 +1,7 @@
 import 'package:delviery_smartcare/core/theme/app_colors.dart';
 import 'package:delviery_smartcare/core/widgets/feature_app_bar.dart';
-import 'package:delviery_smartcare/features/orders/presentation/cubits/orders_cubit.dart';
-import 'package:delviery_smartcare/features/orders/presentation/cubits/orders_state.dart';
+import 'package:delviery_smartcare/features/orders/presentation/cubits/orders/orders_cubit.dart';
+import 'package:delviery_smartcare/features/orders/presentation/cubits/orders/orders_state.dart';
 import 'package:delviery_smartcare/features/orders/presentation/views/widgets/order_top_section.dart';
 import 'package:delviery_smartcare/features/orders/presentation/views/widgets/build_order_list.dart';
 import 'package:flutter/material.dart';

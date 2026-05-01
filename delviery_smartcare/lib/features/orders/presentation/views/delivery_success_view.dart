@@ -1,12 +1,11 @@
+import 'package:delviery_smartcare/features/orders/data/models/order_delviery_shippinf/datum.dart';
 import 'package:delviery_smartcare/features/orders/presentation/views/widgets/delivery_success_body.dart';
 import 'package:flutter/material.dart';
 import 'package:delviery_smartcare/core/theme/app_colors.dart';
-import 'widgets/success_header.dart';
-import 'widgets/earnings_card.dart';
-import 'widgets/summary_item_row.dart';
 
 class DeliverySuccessView extends StatelessWidget {
-  const DeliverySuccessView({super.key});
+  const DeliverySuccessView({super.key, required this.order});
+  final OrderDelvieryShippingDatum order;
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +19,7 @@ class DeliverySuccessView extends StatelessWidget {
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
       ),
-      body: const DeliverySuccessBody(),
+      body:  DeliverySuccessBody(order: order,),
     );
   }
 }

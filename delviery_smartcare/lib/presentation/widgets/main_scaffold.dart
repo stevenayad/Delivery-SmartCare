@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../core/theme/app_colors.dart';
 import '../../features/map/presentation/views/live_map_view.dart';
 import '../../features/orders/presentation/views/available_orders_view.dart';
-import '../../features/orders/presentation/cubits/orders_cubit.dart';
+import '../../features/orders/presentation/cubits/orders/orders_cubit.dart';
 
 class MainScaffold extends StatefulWidget {
   const MainScaffold({super.key});
@@ -27,7 +27,6 @@ class _MainScaffoldState extends State<MainScaffold> {
   final List<Widget> _screens = [
     const LiveMapView(),
     const AvailableOrdersView(),
-    const Center(child: Text('Profile Screen')),
   ];
 
   @override
@@ -76,11 +75,7 @@ class _MainScaffoldState extends State<MainScaffold> {
               activeIcon: _buildNavIcon(Icons.list_alt, 1, isActive: true),
               label: 'ORDERS',
             ),
-            BottomNavigationBarItem(
-              icon: _buildNavIcon(Icons.person_outline, 2),
-              activeIcon: _buildNavIcon(Icons.person, 2, isActive: true),
-              label: 'PROFILE',
-            ),
+           
           ],
         ),
       ),
