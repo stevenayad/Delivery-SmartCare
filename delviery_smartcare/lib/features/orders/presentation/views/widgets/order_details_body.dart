@@ -3,7 +3,7 @@ import 'package:delviery_smartcare/features/orders/presentation/cubits/orders/or
 import 'package:delviery_smartcare/features/orders/presentation/views/order_status_view.dart';
 import 'package:delviery_smartcare/features/orders/presentation/views/widgets/buttons_order_details.dart';
 import 'package:flutter/material.dart';
-import 'package:delviery_smartcare/features/orders/data/models/order_delviery_shippinf/datum.dart';
+import 'package:delviery_smartcare/features/orders/data/models/order_delviery_shippinf/order_delviery_datum.dart';
 import 'package:delviery_smartcare/features/orders/presentation/views/widgets/map_background.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'customer_request_card.dart';
@@ -19,7 +19,8 @@ class OrderDetailsBody extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocListener<OrdersCubit, OrdersState>(
       listener: (context, state) {
-        if (state is OrderAccepted) {
+        if (state.status == OrdersStatus.actionSuccess && 
+            state.actionType == OrderActionType.accept) {
           Navigator.push(
             context,
             MaterialPageRoute(
@@ -27,10 +28,10 @@ class OrderDetailsBody extends StatelessWidget {
             ),
           );
         }
-        if (state is OrdersError) {
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(SnackBar(content: Text(state.message)));
+        if (state.status == OrdersStatus.error) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(state.errorMessage ?? "Error")),
+          );
         }
       },
       child: Stack(
@@ -94,7 +95,7 @@ class OrderDetailsBody extends StatelessWidget {
               /// 🔻 Bottom Buttons
               Buttonorderdetails(
                 onAccept: () {
-                  context.read<OrdersCubit>().AcceptOrder(order.orderId!);
+                  context.read<OrdersCubit>().acceptOrder(order.orderId!);
                 },
                 onDecline: () {
                   ScaffoldMessenger.of(context).showSnackBar(

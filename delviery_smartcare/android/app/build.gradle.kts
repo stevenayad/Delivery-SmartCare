@@ -1,10 +1,20 @@
+import java.util.Properties
+
 plugins {
     id("com.android.application")
     id("kotlin-android")
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id("dev.flutter.flutter-gradle-plugin")
 }
-val mapsApiKey: String = project.findProperty("MAPS_API_KEY") as String? ?: ""
+
+val localProperties = Properties()
+val localPropertiesFile = rootProject.file("local.properties")
+if (localPropertiesFile.exists()) {
+    localPropertiesFile.inputStream().use { localProperties.load(it) }
+}
+
+val mapsApiKey: String = localProperties.getProperty("MAPS_API_KEY") ?: ""
+
 android {
     namespace = "com.example.delviery_smartcare"
     compileSdk = flutter.compileSdkVersion
@@ -16,7 +26,8 @@ android {
     }
 
     kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_17.toString()
+        @Suppress("DEPRECATION")
+        jvmTarget = "17"
     }
 
     defaultConfig {
@@ -33,9 +44,15 @@ android {
 
     buildTypes {
         release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig = signingConfigs.getByName("debug")
+           // TODO: Add your own signing config for the release build.
+           // Signing with the debug keys for now, so `flutter run --release` works.
+           signingConfig = signingConfigs.getByName("debug")
+           isMinifyEnabled = true
+           isShrinkResources = true
+           proguardFiles(
+               getDefaultProguardFile("proguard-android-optimize.txt"),
+               "proguard-rules.pro"
+           )
         }
     }
 }

@@ -1,4 +1,4 @@
-import 'package:delviery_smartcare/features/orders/data/models/order_delviery_shippinf/datum.dart';
+import 'package:delviery_smartcare/features/orders/data/models/order_delviery_shippinf/order_delviery_datum.dart';
 import 'package:delviery_smartcare/features/orders/presentation/views/tracking_order_view.dart';
 import 'package:delviery_smartcare/features/orders/presentation/views/widgets/action_bottom_area.dart';
 import 'package:delviery_smartcare/features/orders/presentation/views/widgets/order_main_details_card.dart';

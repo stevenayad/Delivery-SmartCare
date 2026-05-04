@@ -6,34 +6,34 @@ abstract class Failure {
   const Failure(this.errMessage);
 }
 
-class servivefailure extends Failure {
-  servivefailure(String errMessage) : super(errMessage);
+class ServiveFailure extends Failure {
+  ServiveFailure(String errMessage) : super(errMessage);
 
-  factory servivefailure.fromDioError(DioException dioerror) {
+  factory ServiveFailure.fromDioError(DioException dioerror) {
     switch (dioerror.type) {
       case DioExceptionType.connectionTimeout:
-        return servivefailure("Connection timeout With ApiServer");
+        return ServiveFailure("Connection timeout With ApiServer");
       case DioExceptionType.sendTimeout:
-        return servivefailure("Send timeout With ApiServer");
+        return ServiveFailure("Send timeout With ApiServer");
       case DioExceptionType.receiveTimeout:
-        return servivefailure("Receive timeout With ApiServer");
+        return ServiveFailure("Receive timeout With ApiServer");
       case DioExceptionType.badResponse:
-        return servivefailure.badResponse(
+        return ServiveFailure.badResponse(
           dioerror.response?.statusCode ?? 0,
           dioerror.response?.data,
         );
       case DioExceptionType.cancel:
-        return servivefailure("Request cancelled");
+        return ServiveFailure("Request cancelled");
       case DioExceptionType.connectionError:
-        return servivefailure("No internet connection");
+        return ServiveFailure("No internet connection");
       case DioExceptionType.unknown:
-        return servivefailure("Unexpected error");
+        return ServiveFailure("Unexpected error");
       default:
-        return servivefailure("Oops error");
+        return ServiveFailure("Oops error");
     }
   }
 
-  factory servivefailure.badResponse(int statusCode, dynamic response) {
+  factory ServiveFailure.badResponse(int statusCode, dynamic response) {
     String message = "Unknown error";
 
     if (response is String) {
@@ -54,6 +54,6 @@ class servivefailure extends Failure {
       message = "Server error";
     }
 
-    return servivefailure(message);
+    return ServiveFailure(message);
   }
 }

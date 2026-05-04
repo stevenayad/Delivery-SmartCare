@@ -42,11 +42,7 @@ class ApiService {
 
     if (kDebugMode) {
       dio.interceptors.add(
-        LogInterceptor(
-          requestBody: true,
-          responseBody: true,
-          error: true,
-        ),
+        LogInterceptor(requestBody: true, responseBody: true, error: true),
       );
     }
   }
@@ -54,15 +50,12 @@ class ApiService {
   // =========================
   // GET
   // =========================
-  Future<dynamic> get(
-    String endpoint, {
-    Map<String, dynamic>? query,
-  }) async {
+  Future<dynamic> get(String endpoint, {Map<String, dynamic>? query}) async {
     try {
       final response = await dio.get(endpoint, queryParameters: query);
       return response.data;
     } on DioException catch (e) {
-      throw servivefailure.fromDioError(e);
+      throw ServiveFailure.fromDioError(e);
     }
   }
 
@@ -74,7 +67,7 @@ class ApiService {
       final response = await dio.post(endpoint, data: body);
       return response.data;
     } on DioException catch (e) {
-      throw servivefailure.fromDioError(e);
+      throw ServiveFailure.fromDioError(e);
     }
   }
 
@@ -86,7 +79,7 @@ class ApiService {
       final response = await dio.put(endpoint, data: body);
       return response.data;
     } on DioException catch (e) {
-      throw servivefailure.fromDioError(e);
+      throw ServiveFailure.fromDioError(e);
     }
   }
 
@@ -98,7 +91,7 @@ class ApiService {
       final response = await dio.delete(endpoint, data: body);
       return response.data;
     } on DioException catch (e) {
-      throw servivefailure.fromDioError(e);
+      throw ServiveFailure.fromDioError(e);
     }
   }
 
@@ -110,7 +103,7 @@ class ApiService {
       final response = await dio.patch(endpoint, data: body);
       return response.data;
     } on DioException catch (e) {
-      throw servivefailure.fromDioError(e);
+      throw ServiveFailure.fromDioError(e);
     }
   }
 }

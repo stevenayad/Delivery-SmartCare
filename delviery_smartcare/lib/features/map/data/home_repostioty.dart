@@ -12,33 +12,35 @@ class HomeRepository {
 
   HomeRepository({required this.apiService});
 
-  Future<Either<Failure, StoreModel>> getNearestStore(LatLng userLocation) async {
-  try {
-    final data = await apiService.get('/api/stores');
+  Future<Either<Failure, StoreModel>> getNearestStore(
+    LatLng userLocation,
+  ) async {
+    try {
+      final data = await apiService.get('/api/stores');
 
-    final List stores = data['data'];
+      final List stores = data['data'];
 
-    double minDistance = double.infinity;
-    StoreModel? nearestStore;
+      double minDistance = double.infinity;
+      StoreModel? nearestStore;
 
-    for (var s in stores) {
-      final store = StoreModel.fromJson(s);
+      for (var s in stores) {
+        final store = StoreModel.fromJson(s);
 
-      final distance = calculateDistance(userLocation, store.latLng);
+        final distance = calculateDistance(userLocation, store.latLng);
 
-      if (distance < minDistance) {
-        minDistance = distance;
-        nearestStore = store;
+        if (distance < minDistance) {
+          minDistance = distance;
+          nearestStore = store;
+        }
       }
-    }
 
-    if (nearestStore == null) {
-      return Left(servivefailure('No stores found'));
-    }
+      if (nearestStore == null) {
+        return Left(ServiveFailure('No stores found'));
+      }
 
-    return Right(nearestStore);
-  } catch (e) {
-    return Left(servivefailure(e.toString()));
+      return Right(nearestStore);
+    } catch (e) {
+      return Left(ServiveFailure(e.toString()));
+    }
   }
-}
 }

@@ -1,5 +1,5 @@
 import 'package:delviery_smartcare/core/theme/app_colors.dart';
-import 'package:delviery_smartcare/features/orders/data/models/order_delviery_shippinf/datum.dart';
+import 'package:delviery_smartcare/features/orders/data/models/order_delviery_shippinf/order_delviery_datum.dart';
 import 'package:delviery_smartcare/features/orders/presentation/views/widgets/order_action_button.dart';
 import 'package:delviery_smartcare/features/orders/presentation/views/widgets/order_card_Metrics.dart';
 import 'package:delviery_smartcare/features/orders/presentation/views/widgets/order_card_header.dart';
@@ -10,11 +10,13 @@ import 'package:flutter/material.dart';
 class OrderCardItem extends StatelessWidget {
   final OrderDelvieryShippingDatum order;
   final VoidCallback onViewDetails;
+  final bool highlighted;
 
   const OrderCardItem({
     super.key,
     required this.order,
     required this.onViewDetails,
+    this.highlighted = false,
   });
 
   @override
@@ -25,6 +27,9 @@ class OrderCardItem extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(20),
+        border: highlighted 
+            ? Border.all(color: AppColors.primary, width: 2)
+            : null,
         boxShadow: AppColors.softShadow,
       ),
       child: Column(
