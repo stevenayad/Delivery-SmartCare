@@ -23,12 +23,20 @@ class ViewToggleButtons extends StatelessWidget {
                   onPressed: () => context.read<OrdersCubit>().changeView(OrdersViewType.normal),
                 ),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: 8),
               Expanded(
                 child: ToggleButton(
                   label: 'Nearest',
                   isSelected: state.viewType == OrdersViewType.nearest,
                   onPressed: () => context.read<OrdersCubit>().changeView(OrdersViewType.nearest),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: ToggleButton(
+                  label: 'Smart',
+                  isSelected: state.viewType == OrdersViewType.smart,
+                  onPressed: () => context.read<OrdersCubit>().changeView(OrdersViewType.smart),
                 ),
               ),
             ],

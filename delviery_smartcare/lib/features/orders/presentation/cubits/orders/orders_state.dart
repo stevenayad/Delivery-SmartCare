@@ -1,7 +1,7 @@
 import 'package:delviery_smartcare/features/orders/data/models/order_delviery_shippinf/order_delviery_datum.dart';
 import 'package:meta/meta.dart';
 
-enum OrdersViewType { normal, nearest }
+enum OrdersViewType { normal, nearest, smart }
 
 enum OrdersStatus { initial, loading, success, error, actionSuccess }
 

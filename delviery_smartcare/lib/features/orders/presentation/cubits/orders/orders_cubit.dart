@@ -33,10 +33,22 @@ class OrdersCubit extends Cubit<OrdersState> {
   void changeView(OrdersViewType type) {
     if (state.status != OrdersStatus.success) return;
 
+
+    const double priceWeight = 1.5;
+    const double distanceWeight = 10.0;
+
     List<OrderDelvieryShippingDatum> sortedOrders;
+    
     if (type == OrdersViewType.nearest) {
       sortedOrders = List.from(_originalOrders)
         ..sort((a, b) => (a.distanceKm ?? 0.0).compareTo(b.distanceKm ?? 0.0));
+    } else if (type == OrdersViewType.smart) {
+      sortedOrders = List.from(_originalOrders)
+        ..sort((a, b) {
+          final scoreA = ((a.totalPrice ?? 0.0) * priceWeight) - ((a.distanceKm ?? 0.0) * distanceWeight);
+          final scoreB = ((b.totalPrice ?? 0.0) * priceWeight) - ((b.distanceKm ?? 0.0) * distanceWeight);
+          return scoreB.compareTo(scoreA); 
+        });
     } else {
       sortedOrders = _originalOrders;
     }
