@@ -48,19 +48,18 @@ class MapViewWidget extends StatelessWidget {
                     width: 5,
                     color: Colors.blue,
                   );
-                 ployine.add(polyline);
+                  ployine.add(polyline);
                 }
 
                 return GoogleMap(
                   initialCameraPosition: CameraPosition(
                     target: state.currentPosition,
-                    zoom: 16,
+                    zoom: 14,
                   ),
                   markers: markers,
                   polylines: ployine,
                   myLocationEnabled: true,
                   myLocationButtonEnabled: true,
-                  padding: const EdgeInsets.only(top: 100),
                 );
               },
             );

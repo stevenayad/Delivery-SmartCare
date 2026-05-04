@@ -1,4 +1,4 @@
-import 'datum.dart';
+import 'order_delviery_datum.dart';
 
 class OrderDelvieryShipping {
 	int? statusCode;

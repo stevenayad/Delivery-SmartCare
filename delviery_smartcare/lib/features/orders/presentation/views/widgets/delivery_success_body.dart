@@ -1,5 +1,5 @@
 import 'package:delviery_smartcare/core/theme/app_colors.dart';
-import 'package:delviery_smartcare/features/orders/data/models/order_delviery_shippinf/datum.dart';
+import 'package:delviery_smartcare/features/orders/data/models/order_delviery_shippinf/order_delviery_datum.dart';
 import 'package:delviery_smartcare/features/orders/presentation/views/widgets/earnings_card.dart';
 import 'package:delviery_smartcare/features/orders/presentation/views/widgets/success_header.dart';
 import 'package:delviery_smartcare/features/orders/presentation/views/widgets/summary_item_row.dart';

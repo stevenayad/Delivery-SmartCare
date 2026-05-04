@@ -44,11 +44,11 @@ class AuthRepository {
 
         return Right(tokens);
       } else {
-        return Left(servivefailure(apiResponse.message));
+        return Left(ServiveFailure(apiResponse.message));
       }
     } catch (e) {
       if (e is Failure) return Left(e);
-      return Left(servivefailure("Unexpected error"));
+      return Left(ServiveFailure("Unexpected error"));
     }
   }
 }

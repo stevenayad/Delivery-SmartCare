@@ -1,77 +1,95 @@
 import 'package:delviery_smartcare/features/orders/data/repository/oeder_repository_impl.dart';
+import 'package:delviery_smartcare/features/orders/data/models/order_delviery_shippinf/order_delviery_datum.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'orders_state.dart';
 
 class OrdersCubit extends Cubit<OrdersState> {
   final OrderRepositoryImpl _ordersRepository;
+  List<OrderDelvieryShippingDatum> _originalOrders = [];
 
-  OrdersCubit(this._ordersRepository) : super(OrdersInitial());
-  bool _isLoading = false; 
+  OrdersCubit(this._ordersRepository) : super(const OrdersState());
 
   Future<void> loadOrders() async {
-    if (_isLoading) return;
-
-    _isLoading = true;
-    emit(OrdersLoading());
+    emit(state.copyWith(status: OrdersStatus.loading, clearActionType: true));
 
     final result = await _ordersRepository.getShippingOrders();
 
     result.fold(
-      (failure) => emit(OrdersError(failure.errMessage)),
-      (data) => emit(OrdersLoaded(orders: data, activeFilter: 'All')),
+      (failure) => emit(state.copyWith(
+        status: OrdersStatus.error,
+        errorMessage: failure.errMessage,
+      )),
+      (data) {
+        _originalOrders = data;
+        emit(state.copyWith(
+          status: OrdersStatus.success,
+          orders: data,
+          viewType: OrdersViewType.normal,
+        ));
+      },
     );
-
-    _isLoading = false;
   }
-   Future<void> AcceptOrder(String orderId) async {
-    if (_isLoading) return;
 
-    _isLoading = true;
-    emit(OrdersLoading());
+  void changeView(OrdersViewType type) {
+    if (state.status != OrdersStatus.success) return;
 
+    List<OrderDelvieryShippingDatum> sortedOrders;
+    if (type == OrdersViewType.nearest) {
+      sortedOrders = List.from(_originalOrders)
+        ..sort((a, b) => (a.distanceKm ?? 0.0).compareTo(b.distanceKm ?? 0.0));
+    } else {
+      sortedOrders = _originalOrders;
+    }
+
+    emit(state.copyWith(
+      status: OrdersStatus.success,
+      viewType: type,
+      orders: sortedOrders,
+    ));
+  }
+
+  Future<void> acceptOrder(String orderId) async {
+    emit(state.copyWith(status: OrdersStatus.loading, clearActionType: true));
     final result = await _ordersRepository.AcceptOrder(orderId);
-
     result.fold(
-      (failure) => emit(OrdersError(failure.errMessage)),
-      (data) => emit(OrderAccepted(data)),
+      (failure) => emit(state.copyWith(
+        status: OrdersStatus.error, 
+        errorMessage: failure.errMessage,
+      )),
+      (message) => emit(state.copyWith(
+        status: OrdersStatus.actionSuccess,
+        actionType: OrderActionType.accept,
+      )),
     );
-
-    _isLoading = false;
   }
 
-   Future<void>  ShippingOrder(String orderId) async {
-    if (_isLoading) return;
-
-    _isLoading = true;
-    emit(OrdersLoading());
-
+  Future<void> shippingOrder(String orderId) async {
+    emit(state.copyWith(status: OrdersStatus.loading, clearActionType: true));
     final result = await _ordersRepository.ShippingOrder(orderId);
-
     result.fold(
-      (failure) => emit(OrdersError(failure.errMessage)),
-      (data) => emit(OrderShipping(data)),
+      (failure) => emit(state.copyWith(
+        status: OrdersStatus.error, 
+        errorMessage: failure.errMessage,
+      )),
+      (message) => emit(state.copyWith(
+        status: OrdersStatus.actionSuccess,
+        actionType: OrderActionType.shipping,
+      )),
     );
-
-    _isLoading = false;
   }
 
-   Future<void> ConforimOrder(String orderId) async {
-    if (_isLoading) return;
-
-    _isLoading = true;
-    emit(OrdersLoading());
-
+  Future<void> confirmOrder(String orderId) async {
+    emit(state.copyWith(status: OrdersStatus.loading, clearActionType: true));
     final result = await _ordersRepository.ConfrimOrder(orderId);
-
     result.fold(
-      (failure) => emit(OrdersError(failure.errMessage)),
-      (data) => emit(OrdeConfrimed(data)),
+      (failure) => emit(state.copyWith(
+        status: OrdersStatus.error, 
+        errorMessage: failure.errMessage,
+      )),
+      (message) => emit(state.copyWith(
+        status: OrdersStatus.actionSuccess,
+        actionType: OrderActionType.confirm,
+      )),
     );
-
-    _isLoading = false;
   }
-
-
-
-
 }

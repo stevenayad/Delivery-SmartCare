@@ -1,6 +1,6 @@
 import 'package:delviery_smartcare/core/servieces/location_serviecs.dart';
 import 'package:delviery_smartcare/core/servieces/tracking_services.dart';
-import 'package:delviery_smartcare/features/orders/data/models/order_delviery_shippinf/datum.dart';
+import 'package:delviery_smartcare/features/orders/data/models/order_delviery_shippinf/order_delviery_datum.dart';
 import 'package:delviery_smartcare/features/orders/presentation/cubits/orders/orders_cubit.dart';
 import 'package:delviery_smartcare/features/orders/presentation/cubits/orders/orders_state.dart';
 import 'package:delviery_smartcare/features/orders/presentation/cubits/tracking/tracking_cubit_cubit.dart';
@@ -82,14 +82,15 @@ class _TrackingOrderViewState extends State<TrackingOrderView> {
 
           BlocListener<OrdersCubit, OrdersState>(
             listener: (context, state) {
-              if (state is OrderShipping) {
+              if (state.status == OrdersStatus.actionSuccess && 
+                  state.actionType == OrderActionType.shipping) {
                 context.read<TrackingCubit>().moveToUser();
               }
 
-              if (state is OrdersError) {
+              if (state.status == OrdersStatus.error) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
-                    content: Text(state.message),
+                    content: Text(state.errorMessage ?? "Error"),
                     backgroundColor: Colors.red,
                   ),
                 );

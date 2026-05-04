@@ -1,5 +1,5 @@
 import 'package:delviery_smartcare/core/theme/app_colors.dart';
-import 'package:delviery_smartcare/features/orders/data/models/order_delviery_shippinf/datum.dart';
+import 'package:delviery_smartcare/features/orders/data/models/order_delviery_shippinf/order_delviery_datum.dart';
 import 'package:delviery_smartcare/features/orders/presentation/cubits/orders/orders_cubit.dart';
 import 'package:delviery_smartcare/features/orders/presentation/cubits/orders/orders_state.dart';
 import 'package:delviery_smartcare/features/orders/presentation/views/delivery_success_view.dart';
@@ -17,7 +17,8 @@ class FinalStageBody extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocConsumer<OrdersCubit, OrdersState>(
       listener: (context, state) {
-        if (state is OrdeConfrimed) {
+        if (state.status == OrdersStatus.actionSuccess && 
+            state.actionType == OrderActionType.confirm) {
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
@@ -26,14 +27,17 @@ class FinalStageBody extends StatelessWidget {
           );
         }
 
-        if (state is OrdersError) {
+        if (state.status == OrdersStatus.error) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(state.message), backgroundColor: Colors.red),
+            SnackBar(
+              content: Text(state.errorMessage ?? "Error"),
+              backgroundColor: Colors.red,
+            ),
           );
         }
       },
       builder: (context, state) {
-        final isLoading = state is OrdersLoading;
+        final isLoading = state.status == OrdersStatus.loading;
 
         return SingleChildScrollView(
           child: Column(
@@ -62,7 +66,7 @@ class FinalStageBody extends StatelessWidget {
                   onPressed: isLoading
                       ? null
                       : () {
-                          context.read<OrdersCubit>().ConforimOrder(
+                          context.read<OrdersCubit>().confirmOrder(
                             order.orderId ?? "",
                           );
                         },

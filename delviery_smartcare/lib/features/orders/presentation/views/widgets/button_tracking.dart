@@ -1,4 +1,4 @@
-import 'package:delviery_smartcare/features/orders/data/models/order_delviery_shippinf/datum.dart' show OrderDelvieryShippingDatum;
+import 'package:delviery_smartcare/features/orders/data/models/order_delviery_shippinf/order_delviery_datum.dart' show OrderDelvieryShippingDatum;
 import 'package:delviery_smartcare/features/orders/presentation/cubits/orders/orders_cubit.dart';
 import 'package:delviery_smartcare/features/orders/presentation/cubits/orders/orders_state.dart';
 import 'package:delviery_smartcare/features/orders/presentation/cubits/tracking/tracking_cubit_cubit.dart';
@@ -14,7 +14,7 @@ class ButtonTracking extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isShippingLoading =
-        context.watch<OrdersCubit>().state is OrdersLoading;
+        context.watch<OrdersCubit>().state.status == OrdersStatus.loading;
 
     return Positioned(
       bottom: 0,
@@ -31,7 +31,7 @@ class ButtonTracking extends StatelessWidget {
             onStoreReached: () {
               context
                   .read<OrdersCubit>()
-                  .ShippingOrder(order.orderId ?? "");
+                  .shippingOrder(order.orderId ?? "");
             },
             onCall: () {},
             onReached: () {
