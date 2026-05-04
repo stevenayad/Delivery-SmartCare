@@ -33,6 +33,6 @@ Widget buildBodyContent(BuildContext context, OrdersState state) {
 
     return buildOrdersList(
       state.orders,
-      isNearest: state.viewType == OrdersViewType.nearest,
+      isNearest: state.viewType == OrdersViewType.nearest || state.viewType == OrdersViewType.smart,
     );
   }
