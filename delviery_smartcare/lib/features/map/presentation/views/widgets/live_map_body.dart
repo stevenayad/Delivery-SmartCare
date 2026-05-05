@@ -32,7 +32,7 @@ class _LiveMapBodyState extends State<LiveMapBody> {
     return Stack(
       children: [
         MapViewWidget(),
-        const MapHeader(),
+       // const MapHeader(),
         const MapFloatingButtons(),
         Positioned(
           bottom: 24,
