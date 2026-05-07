@@ -18,7 +18,71 @@ class OrdersCubit extends Cubit<OrdersState> {
     restoreState();
   }
 
-git commit -m "Add trip state recovery and completed orders history persistence"
+  Future<void> restoreState() async {
+    try {
+      final activeOrderStr = await _storage.read(key: _activeOrderKey);
+      final historyStr = await _storage.read(key: _orderHistoryKey);
+
+      OrderDelvieryShippingDatum? activeOrder;
+      List<OrderDelvieryShippingDatum> orderHistory = [];
+
+      if (activeOrderStr != null) {
+        activeOrder = OrderDelvieryShippingDatum.fromJson(
+          jsonDecode(activeOrderStr),
+        );
+      }
+
+      if (historyStr != null) {
+        final List<dynamic> decoded = jsonDecode(historyStr);
+        orderHistory = decoded
+            .map(
+              (e) => OrderDelvieryShippingDatum.fromJson(
+                e as Map<String, dynamic>,
+              ),
+            )
+            .toList();
+      }
+
+      emit(
+        state.copyWith(activeOrder: activeOrder, orderHistory: orderHistory),
+      );
+    } catch (e) {}
+  }
+
+  Future<void> _saveActiveOrder(OrderDelvieryShippingDatum order) async {
+    try {
+      print("Saving Order : $order");
+      final jsonStr = jsonEncode(order.toJson());
+      await _storage.write(key: _activeOrderKey, value: jsonStr);
+    } catch (e) {
+      // Ignore errors
+    }
+  }
+
+  Future<void> _moveToHistory() async {
+    print('Moving to history');
+    if (state.activeOrder != null) {
+      final newHistory = List<OrderDelvieryShippingDatum>.from(
+        state.orderHistory,
+      );
+      if (!newHistory.any((o) => o.orderId == state.activeOrder!.orderId)) {
+        newHistory.add(state.activeOrder!);
+      }
+
+      try {
+        final jsonStr = jsonEncode(newHistory.map((e) => e.toJson()).toList());
+        await _storage.write(key: _orderHistoryKey, value: jsonStr);
+        await _storage.delete(key: _activeOrderKey);
+      } catch (e) {
+        // Ignore errors
+      }
+
+      emit(state.copyWith(orderHistory: newHistory));
+    } else {
+      await _storage.delete(key: _activeOrderKey);
+    }
+  }
+
   void toggleAutoAccept(bool value) {
     emit(state.copyWith(isAutoAcceptEnabled: value));
 
