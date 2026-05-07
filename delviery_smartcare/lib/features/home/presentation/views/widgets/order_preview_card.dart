@@ -1,8 +1,8 @@
-import 'package:delviery_smartcare/features/map/data/model/store_model.dart';
+import 'package:delviery_smartcare/features/home/data/model/store_model.dart';
 
-import 'package:delviery_smartcare/features/map/presentation/views/widgets/action_button_order_preview.dart';
-import 'package:delviery_smartcare/features/map/presentation/views/widgets/label_order_preview.dart';
-import 'package:delviery_smartcare/features/map/presentation/views/widgets/payout_order_preview.dart';
+import 'package:delviery_smartcare/features/home/presentation/views/widgets/action_button_order_preview.dart';
+import 'package:delviery_smartcare/features/home/presentation/views/widgets/label_order_preview.dart';
+import 'package:delviery_smartcare/features/home/presentation/views/widgets/payout_order_preview.dart';
 import 'package:flutter/material.dart';
 import '../../../../../core/theme/app_colors.dart';
 

@@ -1,10 +1,10 @@
-import 'package:delviery_smartcare/features/map/presentation/cubits/nearest_store/neareststore_cubit.dart';
-import 'package:delviery_smartcare/features/map/presentation/cubits/nearest_store/neareststore_state.dart';
+import 'package:delviery_smartcare/features/home/presentation/cubits/nearest_store/neareststore_cubit.dart';
+import 'package:delviery_smartcare/features/home/presentation/cubits/nearest_store/neareststore_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:delviery_smartcare/features/map/presentation/cubits/map_init/map_cubit.dart';
-import 'package:delviery_smartcare/features/map/presentation/cubits/map_init/map_state.dart';
+import 'package:delviery_smartcare/features/home/presentation/cubits/map_init/map_cubit.dart';
+import 'package:delviery_smartcare/features/home/presentation/cubits/map_init/map_state.dart';
 
 class MapViewWidget extends StatelessWidget {
   const MapViewWidget({super.key});

@@ -1,8 +1,9 @@
+import 'package:delviery_smartcare/features/orders/presentation/views/order_status_view.dart';
 import 'package:delviery_smartcare/presentation/widgets/build_drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../core/theme/app_colors.dart';
-import '../../features/map/presentation/views/live_map_view.dart';
+import '../../features/home/presentation/views/live_map_view.dart';
 import '../../features/orders/presentation/views/available_orders_view.dart';
 import '../../features/orders/presentation/cubits/orders/orders_cubit.dart';
 import '../../features/orders/presentation/cubits/orders/orders_state.dart';
@@ -17,6 +18,7 @@ class MainScaffold extends StatefulWidget {
 
 class _MainScaffoldState extends State<MainScaffold> {
   int _currentIndex = 0;
+  String? _lastNavigatedOrderId;
 
   @override
   void initState() {
@@ -36,13 +38,18 @@ class _MainScaffoldState extends State<MainScaffold> {
   Widget build(BuildContext context) {
     return BlocListener<OrdersCubit, OrdersState>(
       listenWhen: (p, c) =>
-          p.lastAutoAcceptedOrder != c.lastAutoAcceptedOrder &&
-          c.lastAutoAcceptedOrder != null,
+          p.activeOrder?.orderId != c.activeOrder?.orderId ||
+          p.lastAutoAcceptedOrder?.orderId != c.lastAutoAcceptedOrder?.orderId ||
+          (p.status != c.status && c.status == OrdersStatus.actionSuccess),
       listener: (context, state) {
+        // Handle Auto Accept
         if (state.status == OrdersStatus.actionSuccess &&
             state.actionType == OrderActionType.accept &&
             state.isAutoAcceptEnabled &&
-            state.lastAutoAcceptedOrder != null) {
+            state.lastAutoAcceptedOrder != null &&
+            _lastNavigatedOrderId != state.lastAutoAcceptedOrder!.orderId) {
+          
+          _lastNavigatedOrderId = state.lastAutoAcceptedOrder!.orderId;
           Navigator.push(
             context,
             MaterialPageRoute(
@@ -50,6 +57,27 @@ class _MainScaffoldState extends State<MainScaffold> {
                   OrderDetailsView(order: state.lastAutoAcceptedOrder!),
             ),
           );
+        }
+
+        // Handle Active Order (Restore or Resume)
+        // Only push if we haven't navigated to this specific order yet
+        // AND it's not a manual accept (which is handled in OrderDetailsBody)
+        if (state.activeOrder != null &&
+            _lastNavigatedOrderId != state.activeOrder!.orderId &&
+            state.actionType != OrderActionType.accept) {
+          
+          _lastNavigatedOrderId = state.activeOrder!.orderId;
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => OrderStatusView(order: state.activeOrder!),
+            ),
+          );
+        }
+
+        // Reset tracking when active order is cleared
+        if (state.activeOrder == null && state.lastAutoAcceptedOrder == null) {
+          _lastNavigatedOrderId = null;
         }
       },
       child: Scaffold(

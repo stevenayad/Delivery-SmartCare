@@ -1,5 +1,5 @@
 import 'package:delviery_smartcare/core/servieces/faliure_services.dart';
-import 'package:delviery_smartcare/features/map/data/model/store_model.dart';
+import 'package:delviery_smartcare/features/home/data/model/store_model.dart';
 
 
 abstract class NearestStoreState {}

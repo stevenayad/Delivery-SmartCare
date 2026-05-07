@@ -4,7 +4,7 @@ import 'package:dartz/dartz.dart';
 import 'package:delviery_smartcare/core/apiservices/api_service.dart';
 import 'package:delviery_smartcare/core/servieces/faliure_services.dart';
 import 'package:delviery_smartcare/core/servieces/tracking_services.dart';
-import 'package:delviery_smartcare/features/map/data/model/store_model.dart';
+import 'package:delviery_smartcare/features/home/data/model/store_model.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class HomeRepository {
