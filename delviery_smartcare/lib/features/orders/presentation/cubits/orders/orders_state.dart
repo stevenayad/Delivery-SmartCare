@@ -16,6 +16,9 @@ class OrdersState {
   final String? errorMessage;
   final bool isAutoAcceptEnabled;
   final OrderDelvieryShippingDatum? lastAutoAcceptedOrder;
+  final OrderDelvieryShippingDatum? activeOrder;
+  final List<OrderDelvieryShippingDatum> orderHistory;
+
 
   const OrdersState({
     this.orders = const [],
@@ -25,6 +28,8 @@ class OrdersState {
     this.errorMessage,
     this.isAutoAcceptEnabled = false,
     this.lastAutoAcceptedOrder,
+    this.activeOrder,
+    this.orderHistory = const [],
   });
 
   OrdersState copyWith({
@@ -35,8 +40,11 @@ class OrdersState {
     String? errorMessage,
     bool? isAutoAcceptEnabled,
     OrderDelvieryShippingDatum? lastAutoAcceptedOrder,
+    OrderDelvieryShippingDatum? activeOrder,
+    List<OrderDelvieryShippingDatum>? orderHistory,
     bool clearActionType = false,
     bool clearAutoAcceptedOrder = false,
+    bool clearActiveOrder = false,
   }) {
     return OrdersState(
       orders: orders ?? this.orders,
@@ -45,7 +53,13 @@ class OrdersState {
       actionType: clearActionType ? null : (actionType ?? this.actionType),
       errorMessage: errorMessage ?? this.errorMessage,
       isAutoAcceptEnabled: isAutoAcceptEnabled ?? this.isAutoAcceptEnabled,
-      lastAutoAcceptedOrder: clearAutoAcceptedOrder ? null : (lastAutoAcceptedOrder ?? this.lastAutoAcceptedOrder),
+      lastAutoAcceptedOrder: clearAutoAcceptedOrder
+          ? null
+          : (lastAutoAcceptedOrder ?? this.lastAutoAcceptedOrder),
+      activeOrder: clearActiveOrder
+          ? null
+          : (activeOrder ?? this.activeOrder),
+      orderHistory: orderHistory ?? this.orderHistory,
     );
   }
 }

@@ -15,9 +15,7 @@ class AvailableOrdersBody extends StatelessWidget {
         return Column(
           children: [
             const ViewToggleButtons(),
-            Expanded(
-              child: buildBodyContent(context, state),
-            ),
+            Expanded(child: buildBodyContent(context, state)),
           ],
         );
       },

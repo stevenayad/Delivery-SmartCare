@@ -11,7 +11,7 @@ import 'core/theme/app_theme.dart';
 import 'features/auth/presentation/views/login_view.dart';
 import 'features/auth/presentation/cubits/auth_cubit.dart';
 import 'features/auth/presentation/cubits/auth_state.dart';
-import 'features/map/presentation/cubits/map_init/map_cubit.dart';
+import 'features/home/presentation/cubits/map_init/map_cubit.dart';
 import 'features/orders/presentation/cubits/orders/orders_cubit.dart';
 import 'presentation/widgets/main_scaffold.dart';
 

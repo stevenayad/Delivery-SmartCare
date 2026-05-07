@@ -1,25 +1,34 @@
 import 'package:delviery_smartcare/features/orders/data/repository/oeder_repository_impl.dart';
 import 'package:delviery_smartcare/features/orders/data/models/order_delviery_shippinf/order_delviery_datum.dart';
+import 'dart:convert';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'orders_state.dart';
 
 class OrdersCubit extends Cubit<OrdersState> {
   final OrderRepositoryImpl _ordersRepository;
   List<OrderDelvieryShippingDatum> _originalOrders = [];
   String? _lastAcceptedId;
+  final _storage = const FlutterSecureStorage();
+  static const _activeOrderKey = 'active_order';
+  static const _orderHistoryKey = 'order_history';
 
-  OrdersCubit(this._ordersRepository) : super(const OrdersState());
+  OrdersCubit(this._ordersRepository) : super(const OrdersState()) {
+    print("Order Cubit Called");
+    restoreState();
+  }
 
+git commit -m "Add trip state recovery and completed orders history persistence"
   void toggleAutoAccept(bool value) {
     emit(state.copyWith(isAutoAcceptEnabled: value));
 
     if (value) {
-    final currentOrders =
-        state.orders.isNotEmpty ? state.orders : _originalOrders;
+      final currentOrders = state.orders.isNotEmpty
+          ? state.orders
+          : _originalOrders;
 
-    handleAutoAccept(currentOrders);
-  }
-   
+      handleAutoAccept(currentOrders);
+    }
   }
 
   void handleAutoAccept(List<OrderDelvieryShippingDatum> orders) {
@@ -47,13 +56,17 @@ class OrdersCubit extends Cubit<OrdersState> {
           ),
         );
       },
-      (message) => emit(
-        state.copyWith(
-          status: OrdersStatus.actionSuccess,
-          actionType: OrderActionType.accept,
-          lastAutoAcceptedOrder: order,
-        ),
-      ),
+      (message) {
+        _saveActiveOrder(order);
+        emit(
+          state.copyWith(
+            status: OrdersStatus.actionSuccess,
+            actionType: OrderActionType.accept,
+            lastAutoAcceptedOrder: order,
+            activeOrder: order,
+          ),
+        );
+      },
     );
   }
 
@@ -135,17 +148,27 @@ class OrdersCubit extends Cubit<OrdersState> {
           errorMessage: failure.errMessage,
         ),
       ),
-      (message) => emit(
-        state.copyWith(
-          status: OrdersStatus.actionSuccess,
-          actionType: OrderActionType.accept,
-        ),
-      ),
+      (message) {
+        OrderDelvieryShippingDatum? active;
+        try {
+          active = _originalOrders.firstWhere((o) => o.orderId == orderId);
+        } catch (e) {
+          active = OrderDelvieryShippingDatum(orderId: orderId);
+        }
+        _saveActiveOrder(active);
+
+        emit(
+          state.copyWith(
+            status: OrdersStatus.actionSuccess,
+            actionType: OrderActionType.accept,
+            activeOrder: active,
+          ),
+        );
+      },
     );
   }
 
   Future<void> shippingOrder(String orderId) async {
-    emit(state.copyWith(status: OrdersStatus.loading, clearActionType: true));
     final result = await _ordersRepository.ShippingOrder(orderId);
     result.fold(
       (failure) => emit(
@@ -173,12 +196,16 @@ class OrdersCubit extends Cubit<OrdersState> {
           errorMessage: failure.errMessage,
         ),
       ),
-      (message) => emit(
-        state.copyWith(
-          status: OrdersStatus.actionSuccess,
-          actionType: OrderActionType.confirm,
-        ),
-      ),
+      (message) {
+        _moveToHistory();
+        emit(
+          state.copyWith(
+            status: OrdersStatus.actionSuccess,
+            actionType: OrderActionType.confirm,
+            clearActiveOrder: true,
+          ),
+        );
+      },
     );
   }
 }
