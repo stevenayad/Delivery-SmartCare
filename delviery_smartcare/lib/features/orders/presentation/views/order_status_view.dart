@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:delviery_smartcare/core/theme/app_colors.dart';
 
 class OrderStatusView extends StatelessWidget {
-
   final OrderDelvieryShippingDatum order;
 
   const OrderStatusView({super.key, required this.order});
@@ -15,16 +14,12 @@ class OrderStatusView extends StatelessWidget {
       backgroundColor: AppColors.background,
       appBar: AppBar(
         backgroundColor: AppColors.primary,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () => Navigator.pop(context),
-        ),
         title: const Text(
           'Order Status',
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
       ),
-      body:  OrderStatusBody(order: order,),
+      body: OrderStatusBody(order: order),
     );
   }
 }

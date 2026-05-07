@@ -1,8 +1,10 @@
 import 'package:delviery_smartcare/core/theme/app_colors.dart';
+import 'package:delviery_smartcare/features/home/presentation/views/live_map_view.dart';
 import 'package:delviery_smartcare/features/orders/data/models/order_delviery_shippinf/order_delviery_datum.dart';
 import 'package:delviery_smartcare/features/orders/presentation/views/widgets/earnings_card.dart';
 import 'package:delviery_smartcare/features/orders/presentation/views/widgets/success_header.dart';
 import 'package:delviery_smartcare/features/orders/presentation/views/widgets/summary_item_row.dart';
+import 'package:delviery_smartcare/presentation/widgets/main_scaffold.dart';
 import 'package:flutter/material.dart';
 
 class DeliverySuccessBody extends StatelessWidget {
@@ -18,10 +20,10 @@ class DeliverySuccessBody extends StatelessWidget {
             subtitle: 'Your payout has been added to your balance.',
           ),
           const SizedBox(height: 20),
-           EarningsCard(amount: '${order.totalPrice}'),
-           SummaryItemRow(
-            orderId: order.orderId??"",
-            deliveryLocation: order.deliveryAddressLine??"",
+          EarningsCard(amount: '${order.totalPrice}'),
+          SummaryItemRow(
+            orderId: order.orderId ?? "",
+            deliveryLocation: order.deliveryAddressLine ?? "",
             icon: Icons.medical_services,
           ),
           const SizedBox(height: 40),
@@ -29,7 +31,10 @@ class DeliverySuccessBody extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: ElevatedButton(
               onPressed: () {
-                Navigator.of(context).popUntil((route) => route.isFirst);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (builder) => MainScaffold()),
+                );
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.primary,

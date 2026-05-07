@@ -39,7 +39,8 @@ class _MainScaffoldState extends State<MainScaffold> {
     return BlocListener<OrdersCubit, OrdersState>(
       listenWhen: (p, c) =>
           p.activeOrder?.orderId != c.activeOrder?.orderId ||
-          p.lastAutoAcceptedOrder?.orderId != c.lastAutoAcceptedOrder?.orderId ||
+          p.lastAutoAcceptedOrder?.orderId !=
+              c.lastAutoAcceptedOrder?.orderId ||
           (p.status != c.status && c.status == OrdersStatus.actionSuccess),
       listener: (context, state) {
         // Handle Auto Accept
@@ -48,7 +49,6 @@ class _MainScaffoldState extends State<MainScaffold> {
             state.isAutoAcceptEnabled &&
             state.lastAutoAcceptedOrder != null &&
             _lastNavigatedOrderId != state.lastAutoAcceptedOrder!.orderId) {
-          
           _lastNavigatedOrderId = state.lastAutoAcceptedOrder!.orderId;
           Navigator.push(
             context,
@@ -65,13 +65,11 @@ class _MainScaffoldState extends State<MainScaffold> {
         if (state.activeOrder != null &&
             _lastNavigatedOrderId != state.activeOrder!.orderId &&
             state.actionType != OrderActionType.accept) {
-          
           _lastNavigatedOrderId = state.activeOrder!.orderId;
-          Navigator.push(
+          Navigator.pushAndRemoveUntil(
             context,
-            MaterialPageRoute(
-              builder: (_) => OrderStatusView(order: state.activeOrder!),
-            ),
+            MaterialPageRoute(builder: (_) => OrderStatusView(order: state.activeOrder!)),
+            (route) => false,
           );
         }
 

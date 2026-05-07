@@ -21,11 +21,12 @@ class OrderDetailsBody extends StatelessWidget {
       listener: (context, state) {
         if (state.status == OrdersStatus.actionSuccess && 
             state.actionType == OrderActionType.accept) {
-          Navigator.push(
+          Navigator.pushAndRemoveUntil(
             context,
             MaterialPageRoute(
               builder: (context) => OrderStatusView(order: order),
             ),
+            (route) => false,
           );
         }
         if (state.status == OrdersStatus.error) {
@@ -36,10 +37,10 @@ class OrderDetailsBody extends StatelessWidget {
       },
       child: Stack(
         children: [
-          /// 🔹 Map
+          
           const MapBackground(),
 
-          /// 🔹 Content
+    
           Column(
             children: [
               Expanded(
@@ -48,7 +49,7 @@ class OrderDetailsBody extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      /// 🟢 Customer Card
+                    
                       CustomerRequestCard(
                         name: order.clientName ?? "Unknown",
                         label: order.deliveryAddressLabel ?? "Home",
@@ -60,7 +61,7 @@ class OrderDetailsBody extends StatelessWidget {
 
                       const SizedBox(height: 20),
 
-                      /// 🟢 Route Details
+                    
                       RouteDetailsWidget(
                         storename: order.storeName ?? "",
                         storeAddress: order.storeAddress ?? "",
@@ -72,7 +73,6 @@ class OrderDetailsBody extends StatelessWidget {
 
                       const SizedBox(height: 20),
 
-                      /// 🟢 Order Summary
                       OrderSummaryCard(
                         items: (order.items ?? [])
                             .map(
@@ -92,7 +92,7 @@ class OrderDetailsBody extends StatelessWidget {
                 ),
               ),
 
-              /// 🔻 Bottom Buttons
+            
               Buttonorderdetails(
                 onAccept: () {
                   context.read<OrdersCubit>().acceptOrder(order.orderId!);
