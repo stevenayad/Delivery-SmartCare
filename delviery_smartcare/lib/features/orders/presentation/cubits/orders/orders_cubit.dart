@@ -9,6 +9,8 @@ class OrdersCubit extends Cubit<OrdersState> {
   final OrderRepositoryImpl _ordersRepository;
   List<OrderDelvieryShippingDatum> _originalOrders = [];
   String? _lastAcceptedId;
+  static const double _priceWeight = 1.5;
+  static const double _distanceWeight = 10.0;
   final _storage = const FlutterSecureStorage();
   static const _activeOrderKey = 'active_order';
   static const _orderHistoryKey = 'order_history';
@@ -99,9 +101,21 @@ class OrdersCubit extends Cubit<OrdersState> {
     if (!state.isAutoAcceptEnabled) return;
     if (orders.isEmpty) return;
 
-    final bestOrder = orders.first;
+    // Find the best order using smart logic: (Price * Weight) - (Distance * Weight)
+    OrderDelvieryShippingDatum? bestOrder;
+    double maxScore = -double.infinity;
 
-    if (_lastAcceptedId == bestOrder.orderId) return;
+    for (var order in orders) {
+      final score =
+          ((order.totalPrice ?? 0.0) * _priceWeight) -
+          ((order.distanceKm ?? 0.0) * _distanceWeight);
+      if (score > maxScore) {
+        maxScore = score;
+        bestOrder = order;
+      }
+    }
+
+    if (bestOrder == null || _lastAcceptedId == bestOrder.orderId) return;
 
     _lastAcceptedId = bestOrder.orderId;
     _performAutoAccept(bestOrder);
@@ -112,7 +126,6 @@ class OrdersCubit extends Cubit<OrdersState> {
 
     result.fold(
       (failure) {
-        _lastAcceptedId = null;
         emit(
           state.copyWith(
             status: OrdersStatus.error,
@@ -184,11 +197,11 @@ class OrdersCubit extends Cubit<OrdersState> {
       sortedOrders = List.from(_originalOrders)
         ..sort((a, b) {
           final scoreA =
-              ((a.totalPrice ?? 0.0) * priceWeight) -
-              ((a.distanceKm ?? 0.0) * distanceWeight);
+              ((a.totalPrice ?? 0.0) * _priceWeight) -
+              ((a.distanceKm ?? 0.0) * _distanceWeight);
           final scoreB =
-              ((b.totalPrice ?? 0.0) * priceWeight) -
-              ((b.distanceKm ?? 0.0) * distanceWeight);
+              ((b.totalPrice ?? 0.0) * _priceWeight) -
+              ((b.distanceKm ?? 0.0) * _distanceWeight);
           return scoreB.compareTo(scoreA);
         });
     } else {
@@ -206,7 +219,13 @@ class OrdersCubit extends Cubit<OrdersState> {
   }
 
   Future<void> acceptOrder(String orderId) async {
-    emit(state.copyWith(status: OrdersStatus.loading, clearActionType: true, clearErrorType: true));
+    emit(
+      state.copyWith(
+        status: OrdersStatus.loading,
+        clearActionType: true,
+        clearErrorType: true,
+      ),
+    );
     final result = await _ordersRepository.AcceptOrder(orderId);
     result.fold(
       (failure) => emit(
@@ -256,10 +275,13 @@ class OrdersCubit extends Cubit<OrdersState> {
   }
 
   Future<void> confirmOrder(String orderId) async {
-    emit(state.copyWith(
+    emit(
+      state.copyWith(
         status: OrdersStatus.loading,
         clearActionType: true,
-        clearErrorType: true));
+        clearErrorType: true,
+      ),
+    );
     final result = await _ordersRepository.ConfrimOrder(orderId);
     result.fold(
       (failure) => emit(

@@ -45,6 +45,7 @@ dependencies:
   flutter_secure_storage: ^9.2.2
   dartz: ^0.10.1
   flutter_advanced_drawer: ^1.5.0
+  url_launcher: ^6.3.2
 
 
 
