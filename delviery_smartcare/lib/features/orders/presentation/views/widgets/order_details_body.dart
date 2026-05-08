@@ -1,3 +1,4 @@
+import 'package:delviery_smartcare/core/widgets/phone_helper.dart';
 import 'package:delviery_smartcare/features/orders/presentation/cubits/orders/orders_cubit.dart';
 import 'package:delviery_smartcare/features/orders/presentation/cubits/orders/orders_state.dart';
 import 'package:delviery_smartcare/features/orders/presentation/views/order_status_view.dart';
@@ -55,7 +56,7 @@ class OrderDetailsBody extends StatelessWidget {
                         label: order.deliveryAddressLabel ?? "Home",
                         rating: "4.9",
                         onCall: () {
-                          // call action
+                         PhoneHelper.makePhoneCall(order.clientPhone??"");
                         },
                       ),
 

@@ -1,3 +1,4 @@
+import 'package:delviery_smartcare/core/widgets/phone_helper.dart';
 import 'package:delviery_smartcare/features/orders/data/models/order_delviery_shippinf/order_delviery_datum.dart' show OrderDelvieryShippingDatum;
 import 'package:delviery_smartcare/features/orders/presentation/cubits/orders/orders_cubit.dart';
 import 'package:delviery_smartcare/features/orders/presentation/cubits/orders/orders_state.dart';
@@ -33,7 +34,9 @@ class ButtonTracking extends StatelessWidget {
                   .read<OrdersCubit>()
                   .shippingOrder(order.orderId ?? "");
             },
-            onCall: () {},
+            onCall: () {
+               PhoneHelper.makePhoneCall(order.clientPhone??"");
+            },
             onReached: () {
               Navigator.push(
                 context,
