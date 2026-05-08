@@ -27,7 +27,7 @@ class FinalStageBody extends StatelessWidget {
           );
         }
 
-        if (state.status == OrdersStatus.error) {
+        if (state.status == OrdersStatus.error && state.errorType == ErrorType.confirmerror) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(state.errorMessage ?? "Error"),

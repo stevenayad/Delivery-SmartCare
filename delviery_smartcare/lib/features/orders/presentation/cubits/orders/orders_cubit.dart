@@ -116,6 +116,7 @@ class OrdersCubit extends Cubit<OrdersState> {
         emit(
           state.copyWith(
             status: OrdersStatus.error,
+            errorType: ErrorType.accepterror,
             errorMessage: failure.errMessage,
           ),
         );
@@ -140,6 +141,7 @@ class OrdersCubit extends Cubit<OrdersState> {
         status: OrdersStatus.loading,
         clearActionType: true,
         clearAutoAcceptedOrder: true,
+        clearErrorType: true,
       ),
     );
 
@@ -149,6 +151,7 @@ class OrdersCubit extends Cubit<OrdersState> {
       (failure) => emit(
         state.copyWith(
           status: OrdersStatus.error,
+          errorType: ErrorType.loaderror,
           errorMessage: failure.errMessage,
         ),
       ),
@@ -203,12 +206,13 @@ class OrdersCubit extends Cubit<OrdersState> {
   }
 
   Future<void> acceptOrder(String orderId) async {
-    emit(state.copyWith(status: OrdersStatus.loading, clearActionType: true));
+    emit(state.copyWith(status: OrdersStatus.loading, clearActionType: true, clearErrorType: true));
     final result = await _ordersRepository.AcceptOrder(orderId);
     result.fold(
       (failure) => emit(
         state.copyWith(
           status: OrdersStatus.error,
+          errorType: ErrorType.accepterror,
           errorMessage: failure.errMessage,
         ),
       ),
@@ -238,6 +242,7 @@ class OrdersCubit extends Cubit<OrdersState> {
       (failure) => emit(
         state.copyWith(
           status: OrdersStatus.error,
+          errorType: ErrorType.shippingerror,
           errorMessage: failure.errMessage,
         ),
       ),
@@ -251,12 +256,16 @@ class OrdersCubit extends Cubit<OrdersState> {
   }
 
   Future<void> confirmOrder(String orderId) async {
-    emit(state.copyWith(status: OrdersStatus.loading, clearActionType: true));
+    emit(state.copyWith(
+        status: OrdersStatus.loading,
+        clearActionType: true,
+        clearErrorType: true));
     final result = await _ordersRepository.ConfrimOrder(orderId);
     result.fold(
       (failure) => emit(
         state.copyWith(
           status: OrdersStatus.error,
+          errorType: ErrorType.confirmerror,
           errorMessage: failure.errMessage,
         ),
       ),

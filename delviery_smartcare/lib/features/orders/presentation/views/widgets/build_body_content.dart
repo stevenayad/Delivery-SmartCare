@@ -9,18 +9,21 @@ Widget buildBodyContent(BuildContext context, OrdersState state) {
       return const Center(child: CircularProgressIndicator());
     }
 
-    if (state.status == OrdersStatus.error) {
+    if (state.status == OrdersStatus.error && state.errorType == ErrorType.loaderror) {
       return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(state.errorMessage ?? 'Something went wrong'),
             const SizedBox(height: 12),
-            ElevatedButton(
-              onPressed: () {
-                context.read<OrdersCubit>().loadOrders();
-              },
-              child: const Text('Retry'),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: ElevatedButton(
+                onPressed: () {
+                  context.read<OrdersCubit>().loadOrders();
+                },
+                child: const Text('Retry'),
+              ),
             ),
           ],
         ),

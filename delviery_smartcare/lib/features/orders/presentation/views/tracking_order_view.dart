@@ -87,7 +87,7 @@ class _TrackingOrderViewState extends State<TrackingOrderView> {
                 context.read<TrackingCubit>().moveToUser();
               }
 
-              if (state.status == OrdersStatus.error) {
+              if (state.status == OrdersStatus.error && state.errorType == ErrorType.shippingerror) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
                     content: Text(state.errorMessage ?? "Error"),

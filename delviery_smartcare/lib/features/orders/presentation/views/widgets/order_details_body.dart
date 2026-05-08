@@ -29,7 +29,7 @@ class OrderDetailsBody extends StatelessWidget {
             (route) => false,
           );
         }
-        if (state.status == OrdersStatus.error) {
+        if (state.status == OrdersStatus.error && state.errorType == ErrorType.accepterror) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text(state.errorMessage ?? "Error")),
           );
