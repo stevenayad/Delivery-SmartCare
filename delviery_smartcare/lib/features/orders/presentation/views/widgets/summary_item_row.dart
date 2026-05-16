@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:delviery_smartcare/core/theme/app_colors.dart';
 
 class SummaryItemRow extends StatelessWidget {
-  final String orderId;
+  //final String orderId;
   final String deliveryLocation;
   final IconData icon;
 
   const SummaryItemRow({
     super.key,
-    required this.orderId,
+    //required this.orderId,
     required this.deliveryLocation,
     required this.icon,
   });
@@ -41,7 +41,7 @@ class SummaryItemRow extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
+                /*Text(
                   'Order #$orderId',
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
@@ -49,7 +49,7 @@ class SummaryItemRow extends StatelessWidget {
                     fontWeight: FontWeight.bold,
                     fontSize: 16,
                   ),
-                ),
+                ),*/
                 Text(
                   'Delivered to $deliveryLocation',
                   style: const TextStyle(

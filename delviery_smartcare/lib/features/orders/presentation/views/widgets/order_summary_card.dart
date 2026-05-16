@@ -3,13 +3,45 @@ import 'package:delviery_smartcare/core/theme/app_colors.dart';
 
 class OrderSummaryCard extends StatelessWidget {
   final List<Map<String, String>> items;
-  final String totalEarnings;
+  final String medicalPrice;
+  final String totalPrice;
+  final String deliveryFee;
 
   const OrderSummaryCard({
     super.key,
     required this.items,
-    required this.totalEarnings,
+    required this.medicalPrice,
+    required this.totalPrice,
+    required this.deliveryFee,
   });
+
+  Widget _buildPriceRow({
+    required String title,
+    required String value,
+    bool isTotal = false,
+  }) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          title,
+          style: TextStyle(
+            fontSize: isTotal ? 18 : 15,
+            fontWeight: isTotal ? FontWeight.bold : FontWeight.w500,
+            color: AppColors.textPrimary,
+          ),
+        ),
+        Text(
+          value,
+          style: TextStyle(
+            fontSize: isTotal ? 32 : 16,
+            fontWeight: FontWeight.bold,
+            color: isTotal ? AppColors.primary : AppColors.textPrimary,
+          ),
+        ),
+      ],
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +60,10 @@ class OrderSummaryCard extends StatelessWidget {
               ),
             ),
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 10,
+                vertical: 4,
+              ),
               decoration: BoxDecoration(
                 color: AppColors.paid,
                 borderRadius: BorderRadius.circular(10),
@@ -89,26 +124,25 @@ class OrderSummaryCard extends StatelessWidget {
                 ),
               ),
               const Divider(height: 32),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text(
-                    'Total Earnings',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.textPrimary,
-                    ),
-                  ),
-                  Text(
-                    totalEarnings,
-                    style: const TextStyle(
-                      fontSize: 32,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.primary,
-                    ),
-                  ),
-                ],
+
+              _buildPriceRow(
+                title: 'Medical Price',
+                value: medicalPrice,
+              ),
+
+              const SizedBox(height: 12),
+
+              _buildPriceRow(
+                title: 'Total Price',
+                value: deliveryFee,
+              ),
+
+              const Divider(height: 32),
+
+              _buildPriceRow(
+                title: 'Total Earnings',
+                value: totalPrice,
+                isTotal: true,
               ),
             ],
           ),

@@ -1,10 +1,20 @@
+import 'package:delviery_smartcare/features/orders/presentation/views/widgets/build_row_price.dart';
 import 'package:flutter/material.dart';
 import 'package:delviery_smartcare/core/theme/app_colors.dart';
 
 class EarningsCard extends StatelessWidget {
   final String amount;
+  final String medicinePrice;
+  final String totalPrice;
 
-  const EarningsCard({super.key, required this.amount});
+  const EarningsCard({
+    super.key,
+    required this.amount,
+    required this.medicinePrice,
+    required this.totalPrice,
+  });
+
+ 
 
   @override
   Widget build(BuildContext context) {
@@ -16,43 +26,26 @@ class EarningsCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
         boxShadow: AppColors.softShadow,
       ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      child: Column(
         children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                'EARNINGS',
-                style: TextStyle(
-                  fontSize: 12,
-                  color: AppColors.textSecondary,
-                  fontWeight: FontWeight.w600,
-                  letterSpacing: 1.2,
-                ),
-              ),
-              const SizedBox(height: 4),
-              Text(
-                '+\$$amount',
-                style: const TextStyle(
-                  fontSize: 40,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.primary,
-                ),
-              ),
-            ],
+          buildPriceRow(
+            title: 'Medicine Price',
+            value: 'EGP$medicinePrice',
           ),
-          Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: AppColors.scaffoldBackground.withOpacity(0.5),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: const Icon(
-              Icons.account_balance_wallet,
-              color: AppColors.primary,
-              size: 30,
-            ),
+
+          const SizedBox(height: 16),
+
+          buildPriceRow(
+            title: 'Total Price',
+            value: 'EGP$amount',
+          ),
+
+          const Divider(height: 32),
+
+          buildPriceRow(
+            title: 'Earnings',
+            value: 'EGP$totalPrice',
+            isEarning: true,
           ),
         ],
       ),

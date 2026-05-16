@@ -35,7 +35,7 @@ class OrderCardItem extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          OrderCardHeader(order: order),
+          //OrderCardHeader(order: order),
           const SizedBox(height: 8),
           OrderLocation(
             icon: Icons.location_on,

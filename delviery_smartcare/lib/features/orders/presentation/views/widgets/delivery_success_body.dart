@@ -20,9 +20,13 @@ class DeliverySuccessBody extends StatelessWidget {
             subtitle: 'Your payout has been added to your balance.',
           ),
           const SizedBox(height: 20),
-          EarningsCard(amount: '${order.totalPrice}'),
+          EarningsCard(
+            amount: '${order.deliveryFee}',
+            medicinePrice: '${order.medicinePrice}',
+            totalPrice: '${order.totalPrice}',
+          ),
           SummaryItemRow(
-            orderId: order.orderId ?? "",
+            //orderId: order.orderId ?? "",
             deliveryLocation: order.deliveryAddressLine ?? "",
             icon: Icons.medical_services,
           ),

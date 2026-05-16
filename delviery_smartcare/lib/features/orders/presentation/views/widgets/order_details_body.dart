@@ -83,8 +83,11 @@ class OrderDetailsBody extends StatelessWidget {
                               },
                             )
                             .toList(),
-                        totalEarnings:
-                            "\$${order.deliveryFee ?? order.totalPrice ?? 0}",
+                        medicalPrice:"EGP${order.medicinePrice ?? 0} ",
+                        deliveryFee:
+                            "EGP${order.deliveryFee ?? 0}",
+                        totalPrice: "EGP${order.totalPrice ?? 0}",
+                        
                       ),
 
                       const SizedBox(height: 100),
