@@ -69,7 +69,7 @@ class OrderRepositoryImpl {
   Future<Either<Failure, String>> ConfrimOrder(String orderId) async {
     try {
       final response = await _apiService.patch(
-        '/api/Delivery/orders/$orderId/confirm-delivery',
+        '/api/Pharmacist/orders/update-status/$orderId',
         null,
         queryParameters: {'newStatus': 3},
       );
