@@ -69,8 +69,9 @@ class OrderRepositoryImpl {
   Future<Either<Failure, String>> ConfrimOrder(String orderId) async {
     try {
       final response = await _apiService.patch(
-        '/api/Delivery/orders/${orderId}/confirm-delivery',
+        '/api/Delivery/orders/$orderId/confirm-delivery',
         null,
+        queryParameters: {'newStatus': 3},
       );
 
       final message = response['message'];
@@ -90,12 +91,14 @@ class OrderRepositoryImpl {
       );
 
       final List data = response.data['data'];
-    
+
       final orders = data
           .map((e) => OrderDelvieryShippingDatum.fromJson(e))
           .toList();
 
-      orders.sort((a, b) => (a.distanceKm ?? 0.0).compareTo(b.distanceKm ?? 0.0));
+      orders.sort(
+        (a, b) => (a.distanceKm ?? 0.0).compareTo(b.distanceKm ?? 0.0),
+      );
 
       return Right(orders);
     } on DioException catch (e) {

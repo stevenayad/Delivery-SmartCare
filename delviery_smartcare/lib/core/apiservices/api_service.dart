@@ -98,9 +98,18 @@ class ApiService {
   // =========================
   // PATCH
   // =========================
-  Future<dynamic> patch(String endpoint, dynamic body) async {
+  Future<dynamic> patch(
+    String endpoint,
+    dynamic body, {
+    Map<String, dynamic>? queryParameters,
+  }) async {
     try {
-      final response = await dio.patch(endpoint, data: body);
+      final response = await dio.patch(
+        endpoint,
+        data: body,
+        queryParameters: queryParameters,
+      );
+
       return response.data;
     } on DioException catch (e) {
       throw ServiveFailure.fromDioError(e);
